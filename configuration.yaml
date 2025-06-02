@@ -1,0 +1,5 @@
+apiCfg:
+  host: localhost
+  port: 8080
+logging:
+  level: debug
