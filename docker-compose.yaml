@@ -23,7 +23,7 @@ services:
     depends_on:
       - keycloak-db
   api:
-    build: ./api
+    build: ./go-api
     ports:
       - "8081:8081"
     environment:
@@ -40,12 +40,12 @@ services:
       POSTGRES_PASSWORD: pass
     volumes:
       - app-db-data:/var/lib/postgresql/data
-#  frontend:
-#    build: ./frontend
-#    ports:
-#      - "80:80"
-#    depends_on:
-#      - api
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api
 volumes:
   keycloak-db-data:
   app-db-data:

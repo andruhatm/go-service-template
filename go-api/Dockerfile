@@ -10,7 +10,7 @@ COPY go.sum .
 
 RUN go mod download
 
-COPY . .
+COPY .. .
 
 RUN go build -o ./out/app .
 
