@@ -1,5 +1,5 @@
 FROM golang:1.24-alpine AS build
-LABEL authors="Andrey"
+LABEL authors="andrew.for.comm@gmail.com"
 
 RUN apk add --no-cache git
 

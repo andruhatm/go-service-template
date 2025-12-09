@@ -1,0 +1,91 @@
+<head>
+  <title>Новое событие</title>
+</head>
+
+<main>
+  <div>
+    <mat-card class="container my-5">
+
+      <form [formGroup]="form" (ngSubmit)="handleFormSubmit()">
+        <mat-error *ngIf="error"> При создании подписки произошла ошибка.</mat-error>
+
+        <mat-card-content class="content">
+          <div class="row mb-3 align-items-center justify-content-between">
+            <div class="col-auto">
+              <mat-card-title class="create__title"
+              ><img src="fonts/icons/main/New_Topic.svg" alt="New topic" />Новая подписка</mat-card-title>
+            </div>
+            <div class="col-auto">
+              <a mat-flat-button routerLink="/ems/ems-list" class="alert-warning btn">Показать текущие подписки</a>
+            </div>
+          </div>
+
+          <mat-form-field  appearance="outline">
+            <mat-label>SNMP IP адрес</mat-label>
+            <input class="message-input" matInput formControlName="snmpIP" required />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>SNMP Порт</mat-label>
+            <input class="message-input" matInput formControlName="snmpPort" required />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Уровень доступа</mat-label>
+            <input class="message-input" matInput formControlName="community" required />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>FTP IP адрес</mat-label>
+            <input class="message-input" matInput formControlName="FTPip" required />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Путь к файлам</mat-label>
+            <input class="message-input" matInput formControlName="pathTofiles" required />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Логин</mat-label>
+            <input class="message-input" matInput formControlName="username" required />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Пароль</mat-label>
+            <input class="message-input" matInput formControlName="password" required />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Протокол аутентификации</mat-label>
+            <input class="message-input" matInput formControlName="protocol" required />
+          </mat-form-field>
+
+
+          <hr class="my-2" />
+          <div *ngIf="imageUpload !== false ">
+            <ng-container *ngIf="secure_url.substr(0, 4)==='http' else noHttp">
+              <img class="img-fluid" src="{{secure_url}}" alt="imageHeader">
+              <br>
+              <hr>
+            </ng-container>
+            <ng-template #noHttp>
+              <img class="img-fluid" src="https://{{secure_url}}" alt="imageHeader">
+              <br>
+              <hr>
+            </ng-template>
+          </div>
+          <!--          <h3>Value: {{chipsControlValue$ | async}}</h3>-->
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+          <div class="create__footer">
+            <a mat-flat-button routerLink="/ems-list" class="create__btn-cansel btn">Отмена</a>
+            <button mat-flat-button color="primary" [disabled]="!form.valid" (click)="openDialog()">Создать подписку</button>
+            <!--            <a class="create__btn-create btn btn&#45;&#45;type-02">Создать событие</a>-->
+          </div>
+        </mat-card-actions>
+      </form>
+
+    </mat-card>
+  </div>
+</main>

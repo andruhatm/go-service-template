@@ -1,0 +1,53 @@
+<h2 mat-dialog-title>Создание КПИ</h2>
+<mat-dialog-content class="mat-typography">
+  <p>Заполните поля</p>
+
+  <form [formGroup]="form" (ngSubmit)="handleFormSubmit()">
+    <!--    <mat-error *ngIf="error"> При создании подписки произошла ошибка.</mat-error>-->
+
+    <mat-card-content class="content">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Имя</mat-label>
+          <input class="message-input" matInput formControlName="name" required />
+        </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Тип обьектов</mat-label>
+              <input class="message-input" matInput formControlName="type" required />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Формула</mat-label>
+              <input class="message-input" matInput formControlName="formula" required />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Исчисление</mat-label>
+              <input class="message-input" matInput formControlName="valuetype" required />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Направление ухудшения</mat-label>
+              <input class="message-input" matInput formControlName="degradation" required />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Единица измерения</mat-label>
+              <input class="message-input" matInput formControlName="unit" required />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Ограничитель</mat-label>
+              <input class="message-input" matInput formControlName="threshold" required />
+            </mat-form-field>
+
+      <hr class="my-2" />
+
+    </mat-card-content>
+
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close>Отмена</button>
+      <button mat-flat-button color="primary" [mat-dialog-close]="true" [disabled]="!form.valid" routerLink="/catalog">Создать КПИ</button>
+    </mat-dialog-actions></form>
+</mat-dialog-content>

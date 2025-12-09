@@ -1,0 +1,60 @@
+<div *ngIf="router.url!=='/auth/signup' && router.url!=='/auth/login'">
+  <header>
+    <div class="header js-header js-dropdown">
+      <div class="container">
+        <div class="header__logo">
+          <img class = "img-fluid" ngSrc="../fonts/icons/main/imgbin_broadcasting-radio-computer-icons-png.png" alt="logo"
+               height="512" width="512" />
+          <a routerLink="/inventory" class="header__logo-btn" data-dropdown-btn="logo">Metrics Forecaster</a>
+          <!--        <nav class="dropdown dropdown&#45;&#45;design-01" data-dropdown-list="logo">-->
+          <!--          <ul class="dropdown__catalog">-->
+          <!--            <li><a [routerLink]="['/feed']">Главная страница</a></li>-->
+          <!--            <li><a [routerLink]="['/events/add-event']">Новое событие</a></li>-->
+          <!--          </ul>-->
+          <!--        </nav>-->
+        </div>
+        <!--      (click)="tabClick('recs')-->
+        <div *ngIf="this.user.authenticated" class="header__create"><a routerLink='/inventory'>Обьекты мониторинга</a></div>
+        <div *ngIf="this.user.authenticated" class="header__create"><a routerLink='/anomaly'>Пронозирование</a></div>
+        <div *ngIf="this.user.authenticated" class="header__create"><a routerLink='/reports'>Отчет</a></div>
+        <div *ngIf="this.user.authenticated" class="header__create"><a routerLink='/catalog'>Каталог метрик</a></div>
+        <div *ngIf="this.user.authenticated" class="header__create"><a routerLink='/tickets'>Задачи</a></div>
+        <div *ngIf="this.user.authenticated" class="header__create"><a routerLink='/ems/add-ems' mat-flat-button color="primary" style="background-color: #1f76d5">Добавить EMS</a></div>
+        <!--      <div *ngIf="this.user.authenticated" class="header__menu">-->
+        <!--          <div class="header__menu-btn" data-dropdown-btn="menu">Мои события<i class="icon-Menu_Icon"></i></div>-->
+        <!--          <nav class="dropdown dropdown&#45;&#45;design-01" data-dropdown-list="menu">-->
+        <!--            <div *ngIf="this.user.authenticated">-->
+        <!--              <ul class="dropdown__catalog row links">-->
+        <!--                <li class="col-xs-6"><a (click)="tabClick('saved')">Сохраненные</a></li>-->
+        <!--                <li class="col-xs-6"><a (click)="tabClick('subs')">Подписки</a></li>-->
+        <!--                <li class="col-xs-6"><a (click)="tabClick('recs')">Рекомендации</a></li>-->
+        <!--&lt;!&ndash;                <li class="col-xs-6"><a>Созданные события</a></li>&ndash;&gt;-->
+        <!--                &lt;!&ndash;              <li class="col-xs-6"><a href="#">Tags</a></li>&ndash;&gt;-->
+        <!--  &lt;!&ndash;              <li class="col-xs-6"><a href="#">Shortcuts</a></li>&ndash;&gt;-->
+        <!--              </ul>-->
+        <!--            </div>-->
+        <!--          </nav>-->
+        <!--        </div>-->
+        <div class="header__notification">
+          <app-user-menu></app-user-menu>
+        </div>
+      </div>
+    </div>
+  </header>
+</div>
+<router-outlet></router-outlet>
+<div *ngIf="router.url!=='/auth/signup' && router.url!=='/auth/login'">
+  <footer>
+    <div class="footer js-dropdown">
+      <div class="container">
+        <div class="footer__bline m--center">
+          <div class="footer__copyright m--center">
+            Telecom Metrics Forecaster
+            2026
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+

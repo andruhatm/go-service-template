@@ -1,0 +1,51 @@
+version: '3.8'
+services:
+  keycloak-db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.1
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: keycloak-db
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command: start-dev
+    ports:
+      - "8080:8080"
+    depends_on:
+      - keycloak-db
+  api:
+    build: ./api
+    ports:
+      - "8081:8081"
+    environment:
+      - DATABASE_URL=postgres://user:pass@db:5432/appdb?sslmode=disable
+      - KEYCLOAK_ISSUER=http://keycloak:8080/realms/myrealm
+    depends_on:
+      - keycloak
+      - db
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - app-db-data:/var/lib/postgresql/data
+#  frontend:
+#    build: ./frontend
+#    ports:
+#      - "80:80"
+#    depends_on:
+#      - api
+volumes:
+  keycloak-db-data:
+  app-db-data:

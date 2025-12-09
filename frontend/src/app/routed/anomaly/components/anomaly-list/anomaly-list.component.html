@@ -1,0 +1,31 @@
+
+<div class="container">
+
+  <div class="d-flex justify-content-end mb-3 mt-3">
+      <button mat-flat-button color="primary" (click)="openDialog()">Заявка на прогноз</button>
+  </div>
+  <div class="nav">
+  </div>
+    <div class="posts" >
+      <div class="posts__body" >
+        <div class="table__view">
+          <table mat-table [dataSource]="this.dataSource" matSort style="background-color: white">
+            <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
+
+              <th mat-header-cell *matHeaderCellDef>
+                {{column.header}}
+              </th>
+              <td mat-cell *matCellDef="let row">
+                {{column.cell(row)}}
+              </td>
+
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+      </div>
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons style="background-color: white"></mat-paginator>
+    </div>
+</div>

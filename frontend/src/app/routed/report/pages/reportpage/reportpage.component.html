@@ -1,0 +1,125 @@
+<div class="container feed">
+  <div class="nav">
+    <div class="nav__categories js-dropdown">
+
+      <div class="nav__select">
+        <div class="btn-select" data-dropdown-btn="categories">Тип обьекта</div>
+        <nav class="dropdown dropdown--design-01" data-dropdown-list="categories">
+          <ul class="dropdown__catalog row">
+            <ul *ngFor="let category of categories" class="dropdown__catalog row">
+              <li class="col-xs-6"><a (click)="handleCategoryClick(category)" class="category"><i
+                [class]="category.color"></i>{{ category.nameCategory }}</a>
+              </li>
+            </ul>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <div class="posts">
+
+    <div class="posts__body">
+      <mat-card class="container">
+
+        <mat-card-content>
+
+        <form [formGroup]="form" (ngSubmit)="handleFormSubmit()">
+
+          <mat-form-field  *ngIf="currentCategory==1" appearance="outline">
+            <mat-label>Соты</mat-label>
+            <mat-select formControlName="objects" multiple>
+              <mat-option *ngFor="let obj of cellList" [value]="obj">{{obj}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field  *ngIf="currentCategory==2" appearance="outline">
+            <mat-label>Узлы связи</mat-label>
+            <mat-select formControlName="objects" multiple>
+              <mat-option *ngFor="let obj of neList" [value]="obj">{{obj}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field  *ngIf="currentCategory==3" appearance="outline">
+            <mat-label>Подсеть</mat-label>
+            <mat-select formControlName="objects" multiple>
+              <mat-option *ngFor="let obj of networkList" [value]="obj">{{obj}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field  appearance="outline">
+            <mat-label>Метрики</mat-label>
+            <mat-select formControlName="metrics1" multiple>
+              <mat-option *ngFor="let metric of metricList" [value]="metric">{{metric}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>КПИ</mat-label>
+            <mat-select  formControlName="kpis" multiple>
+              <mat-option *ngFor="let kpi of kpiList" [value]="kpi">{{kpi}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Выберите дату начала</mat-label>
+            <input matInput formControlName="date" [matDatepicker]="picker" required />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Выберите время</mat-label>
+            <input matInput formControlName="time"  [ngxTimepicker]="fullTime" [format]="24" readonly required />
+            <mat-datepicker-toggle [for]="fullTime" matSuffix>
+              <mat-icon matDatepickerToggleIcon class="timer">alarm</mat-icon>
+            </mat-datepicker-toggle>
+            <ngx-material-timepicker #fullTime></ngx-material-timepicker>
+          </mat-form-field>
+
+              <!--              дата время 2-->
+          <mat-form-field appearance="outline">
+            <mat-label>Выберите дату конца</mat-label>
+            <input matInput formControlName="date2" [matDatepicker]="picker2" required />
+            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+          </mat-form-field>
+
+
+          <mat-form-field appearance="outline">
+            <mat-label>Выберите время</mat-label>
+            <input matInput formControlName="time2"  [ngxTimepicker]="fullTime2" [format]="24" readonly required />
+            <mat-datepicker-toggle [for]="fullTime2" matSuffix>
+              <mat-icon matDatepickerToggleIcon class="timer">alarm</mat-icon>
+            </mat-datepicker-toggle>
+            <ngx-material-timepicker #fullTime2></ngx-material-timepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Гранулярность</mat-label>
+            <mat-select>
+              <mat-option *ngFor="let gran of granularity" [value]="gran">
+                {{gran}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <hr class="my-2" />
+
+        <mat-card-actions align="end">
+          <div class="create__footer">
+            <button mat-flat-button color="primary" [disabled]="!form.valid">Построить отчет</button>
+          </div>
+        </mat-card-actions>
+        </form>
+       </mat-card-content>
+      </mat-card>
+    </div>
+
+    <ag-charts-angular
+      *ngIf="report"
+      style="height: 100%"
+      [options]="options"
+    ></ag-charts-angular>
+  </div>
+
+</div>

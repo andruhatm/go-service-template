@@ -1,0 +1,57 @@
+// Toggles
+//
+// Used in conjunction with global variables to enable certain theme features.
+
+@mixin box-shadow($shadow...) {
+  @if $enable-shadows {
+    box-shadow: $shadow;
+  }
+}
+
+@mixin transition($transition...) {
+  @if $enable-transitions {
+    @if length($transition) == 0 {
+      transition: $transition-base;
+    } @else {
+      transition: $transition;
+    }
+  }
+}
+
+// Utilities
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/breakpoints";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/hover";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/image";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/badge";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/resize";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/screen-reader";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/size";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/reset-text";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/text-emphasis";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/text-hide";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/text-truncate";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/transforms";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/visibility";
+
+// // Components
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/alert";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/buttons";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/cards";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/pagination";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/lists";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/list-group";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/nav-divider";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/forms";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/table-row";
+
+// // Skins
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/background-variant";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/border-radius";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/gradients";
+
+// // Layout
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/clearfix";
+// @import "mixins/navbar-align";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/grid-framework";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/grid";
+@import "src/assets/vendor/bootstrap/v4/scss/mixins/float";

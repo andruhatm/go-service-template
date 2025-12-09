@@ -1,10 +1,11 @@
 package router
 
 import (
+	"net/http"
+
 	"github.com/gookit/slog"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"net/http"
 )
 
 func GenerateServeMux() *mux.Router {

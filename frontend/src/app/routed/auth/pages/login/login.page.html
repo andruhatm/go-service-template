@@ -1,0 +1,51 @@
+<head>
+  <title>Login</title>
+</head>
+
+<div class="signup">
+  <header class="signup__header">
+    <div class="container">
+      <div class="signup__header-content">
+        <button [routerLink]="['/feed']" style="margin-bottom:10px" type="button" class="btn-success">Главная</button>
+      </div>
+    </div>
+  </header>
+  <main class="signup__main" style="position:absolute;
+        top:15%;">
+    <img class="signup__bg" src="assets/images/signup-bg.png" alt="bg" />
+    <div class="container">
+      <div class="signup__container">
+        <div class="signup__logo">
+          <a style="font-family: 'Comic Sans MS'"><img src="../../../../../fonts/icons/main/smart-event-logo.png" alt="logo" />Smart Event</a>
+        </div>
+        <mat-card appearance="outlined" class="signup__form__login">
+          <form #form="ngForm" (ngSubmit)="handleFormSubmit(form.value)">
+            <mat-error *ngIf="error"> Неверная почта или пароль! </mat-error>
+            <mat-card-content class="content">
+              <mat-card-title>Вход</mat-card-title>
+              <mat-form-field>
+                <mat-label>Почта</mat-label>
+                <input matInput ngModel name="email" required pattern="^[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}$" />
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Пароль</mat-label>
+                <input matInput type="password" ngModel name="password" required />
+              </mat-form-field>
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+              <a class="redirect" routerLink="/auth/signup"> <p>Еще не зарегистрированы?</p></a>
+              <button
+                mat-flat-button
+                color="primary"
+                [disabled]="!form.valid">Вход</button>
+              <a mat-flat-button color="primary" style="background-color: #f9bc64" (click)="form.resetForm()">Отмена</a>
+            </mat-card-actions>
+          </form>
+        </mat-card>
+        <!--        </div>-->
+      </div>
+    </div>
+  </main>
+</div>
+

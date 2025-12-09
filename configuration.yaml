@@ -3,3 +3,13 @@ apiCfg:
   port: 8080
 logging:
   level: debug
+postgresCfg:
+  - host: localhost
+    port: 5432
+    user: postgres
+    password: postgres
+    database: postgres
+sqliteCfg:
+  path: "./db"
+victoriaCfg:
+  url: http://localhost

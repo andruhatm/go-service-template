@@ -1,0 +1,67 @@
+<div class="container">
+  <div class="nav">
+    <div class="nav__categories js-dropdown">
+      <div class="nav__select">
+        <div class="btn-select" data-dropdown-btn="categories">Тип обьекта</div>
+        <nav class="dropdown dropdown--design-01" data-dropdown-list="categories">
+          <ul class="dropdown__catalog row">
+            <ul *ngFor="let category of categories" class="dropdown__catalog row">
+              <li class="col-xs-6"><a (click)="handleCategoryClick(category)" class="category"><i
+                [class]="category.color"></i>{{ category.nameCategory }}</a>
+              </li>
+            </ul>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <div class="posts">
+
+    <div *ngIf="title">
+      <div style="font-size: 22px; background-color: rgba(249, 188, 100, 0.7)" class="posts__head">
+        <div class="title">
+          {{ title }}
+        </div>
+      </div>
+    </div>
+
+
+    <div class="posts__body" >
+      <div class="table__view">
+        <table *ngIf="!cells" mat-table [dataSource]="this.dataSource" class="mat-elevation-z8" style="background-color: white">
+          <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
+
+            <th mat-header-cell *matHeaderCellDef>
+              {{column.header}}
+            </th>
+            <td mat-cell *matCellDef="let row">
+              {{column.cell(row)}}
+            </td>
+
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <table *ngIf="cells" mat-table [dataSource]="this.dataSource2" class="mat-elevation-z8" style="background-color: white">
+          <ng-container *ngFor="let column of columns2" [matColumnDef]="column.columnDef">
+            <th mat-header-cell *matHeaderCellDef>
+              {{column.header}}
+            </th>
+            <td mat-cell *matCellDef="let row">
+              {{column.cell(row)}}
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns2;"></tr>
+        </table>
+      </div>
+
+
+    </div>
+  </div>
+
+</div>

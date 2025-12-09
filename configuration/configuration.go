@@ -3,14 +3,35 @@ package configuration
 import "github.com/ilyakaznacheev/cleanenv"
 
 type (
+	PgConnection struct {
+		Host     string `yaml:"host" env-default:"localhost"`
+		Port     string `yaml:"port" env-default:"5432"`
+		User     string `yaml:"user" env-default:"postgres"`
+		Password string `yaml:"password" env-default:"postgres"`
+		Database string `yaml:"database" env-default:"postgres"`
+	}
+
 	Configuration struct {
-		Api ApiCfg `json:"apiCfg"`
+		Api         ApiCfg      `json:"apiCfg"`
+		PostgresCfg PostgresCfg `json:"postgresCfg"`
+		SqliteCfg   SqliteCfg   `json:"sqliteCfg"`
+		VictoriaCfg VictoriaCfg `json:"victoriaCfg"`
 	}
 
 	ApiCfg struct {
 		Host string `yaml:"host" env-default:"localhost"`
 		Port string `yaml:"port" env-default:"8080"`
 	}
+
+	SqliteCfg struct {
+		Path string `yaml:"path" env-default:"./db"`
+	}
+
+	VictoriaCfg struct {
+		URL string `yaml:"url" env-default:"localhost"`
+	}
+
+	PostgresCfg []PgConnection
 
 	LoggingCfg struct {
 		Level string `yaml:"level" env-default:"debug"`
