@@ -10,12 +10,18 @@ type (
 		Password string `yaml:"password" env-default:"postgres"`
 		Database string `yaml:"database" env-default:"postgres"`
 	}
+	KeycloakConfig struct {
+		Issuer       string `yaml:"issuer" env-default:"http://localhost:8080"`
+		ClientID     string `yaml:"client_id" env-default:"spa-client"`
+		ClientSecret string `yaml:"client_secret" env-default:"123"`
+	}
 
 	Configuration struct {
-		Api         ApiCfg      `json:"apiCfg"`
-		PostgresCfg PostgresCfg `json:"postgresCfg"`
-		SqliteCfg   SqliteCfg   `json:"sqliteCfg"`
-		VictoriaCfg VictoriaCfg `json:"victoriaCfg"`
+		Api         ApiCfg         `json:"apiCfg"`
+		PostgresCfg PostgresCfg    `json:"postgresCfg"`
+		SqliteCfg   SqliteCfg      `json:"sqliteCfg"`
+		VictoriaCfg VictoriaCfg    `json:"victoriaCfg"`
+		KeycloakCfg KeycloakConfig `json:"keycloakCfg"`
 	}
 
 	ApiCfg struct {

@@ -12,4 +12,8 @@ postgresCfg:
 sqliteCfg:
   path: "./db"
 victoriaCfg:
-  url: http://localhost
+  url: http://localhost:8090
+keycloakCfg:
+  issuer: http://localhost:8080
+  client_id: spa-client
+  client_secret: jym5bshxscBAQJqBsfo45hphL0oRdhx3

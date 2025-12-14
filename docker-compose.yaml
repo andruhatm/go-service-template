@@ -29,6 +29,8 @@ services:
     environment:
       - DATABASE_URL=postgres://user:pass@db:5432/appdb?sslmode=disable
       - KEYCLOAK_ISSUER=http://keycloak:8080/realms/myrealm
+      - KEYCLOAK_CLIENT_ID=spa-client
+      - KEYCLOAK_CLIENT_SECRET=jym5bshxscBAQJqBsfo45hphL0oRdhx3
     depends_on:
       - keycloak
       - db

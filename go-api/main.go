@@ -4,9 +4,7 @@ import (
 	"context"
 	"fmt"
 	"live/configuration"
-	"live/db/pg"
-	"live/db/sqlite"
-	"live/db/victoria"
+	"live/middleware"
 	r "live/router"
 	"net/http"
 	"os"
@@ -35,35 +33,38 @@ func main() {
 	slog.Debugf("%s Configuration values passed: %+v", appPref, cfg)
 
 	// init db's
-
 	//1 postgres
-	pgConnStr := "user=user password=password host=localhost port=5432 dbname=mydb sslmode=disable"
-	pgService, err := pg.NewPostgreSQLService(pgConnStr)
-	if err != nil {
-		slog.Fatalf("Ошибка подключения к PostgreSQL: %v", err)
-	}
-	defer pgService.Close()
-	fmt.Println("Подключено к PostgreSQL")
+	//pgConnStr := "user=user password=password host=localhost port=5432 dbname=mydb sslmode=disable"
+	//pgService, err := pg.NewPostgreSQLService(pgConnStr)
+	//if err != nil {
+	//	slog.Fatalf("Ошибка подключения к PostgreSQL: %v", err)
+	//}
+	//defer pgService.Close()
+	//fmt.Println("Подключено к PostgreSQL")
+	//
+	////2 sqlite
+	//sqliteSvc, err := sqlite.NewSQLiteService(fmt.Sprintf("file:%s?_busy_timeout=5000&_journal_mode=WAL", cfg.SqliteCfg.Path))
+	//if err != nil {
+	//	slog.Fatalf("Ошибка подключения к SQLite: %v", err)
+	//}
+	//defer sqliteSvc.Close()
+	//
+	////3 VictoriaMetrics
+	//vmService, err := victoria.NewVictoriaMetricsService(fmt.Sprintf("%s", cfg.VictoriaCfg.URL), 10*time.Second)
+	//if err != nil {
+	//	fmt.Printf("Ошибка при создании VictoriaMetricsService: %v\n", err)
+	//	return
+	//}
+	//defer vmService.Close()
 
-	//2 sqlite
-	sqliteSvc, err := sqlite.NewSQLiteService(fmt.Sprintf("file:%s?_busy_timeout=5000&_journal_mode=WAL", cfg.SqliteCfg.Path))
+	// init keycloak middleware
+	authMiddleware, err := middleware.NewAuthMiddleware(cfg.KeycloakCfg)
 	if err != nil {
-		slog.Fatalf("Ошибка подключения к SQLite: %v", err)
+		slog.Fatal("Failed to create auth middleware:", err)
 	}
-	defer sqliteSvc.Close()
-
-	//3 VictoriaMetrics
-	vmService, err := victoria.NewVictoriaMetricsService(fmt.Sprintf("%s", cfg.VictoriaCfg.URL), 10*time.Second)
-	if err != nil {
-		fmt.Printf("Ошибка при создании VictoriaMetricsService: %v\n", err)
-		return
-	}
-	defer vmService.Close()
-
-	// init traces
 
 	// init router
-	router := r.GenerateServeMux()
+	router := r.GenerateServeMux(*authMiddleware)
 
 	// run server
 	s := &http.Server{
