@@ -68,14 +68,14 @@
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Выберите время</mat-label>
-            <input matInput formControlName="time"  [ngxTimepicker]="fullTime" [format]="24" readonly required />
-            <mat-datepicker-toggle [for]="fullTime" matSuffix>
-              <mat-icon matDatepickerToggleIcon class="timer">alarm</mat-icon>
-            </mat-datepicker-toggle>
-            <ngx-material-timepicker #fullTime></ngx-material-timepicker>
-          </mat-form-field>
+<!--          <mat-form-field appearance="outline">-->
+<!--            <mat-label>Выберите время</mat-label>-->
+<!--            <input matInput formControlName="time"  [ngxTimepicker]="fullTime" [format]="24" readonly required />-->
+<!--            <mat-datepicker-toggle [for]="fullTime" matSuffix>-->
+<!--              <mat-icon matDatepickerToggleIcon class="timer">alarm</mat-icon>-->
+<!--            </mat-datepicker-toggle>-->
+<!--            <ngx-material-timepicker #fullTime></ngx-material-timepicker>-->
+<!--          </mat-form-field>-->
 
               <!--              дата время 2-->
           <mat-form-field appearance="outline">
@@ -86,14 +86,14 @@
           </mat-form-field>
 
 
-          <mat-form-field appearance="outline">
-            <mat-label>Выберите время</mat-label>
-            <input matInput formControlName="time2"  [ngxTimepicker]="fullTime2" [format]="24" readonly required />
-            <mat-datepicker-toggle [for]="fullTime2" matSuffix>
-              <mat-icon matDatepickerToggleIcon class="timer">alarm</mat-icon>
-            </mat-datepicker-toggle>
-            <ngx-material-timepicker #fullTime2></ngx-material-timepicker>
-          </mat-form-field>
+<!--          <mat-form-field appearance="outline">-->
+<!--            <mat-label>Выберите время</mat-label>-->
+<!--            <input matInput formControlName="time2"  [ngxTimepicker]="fullTime2" [format]="24" readonly required />-->
+<!--            <mat-datepicker-toggle [for]="fullTime2" matSuffix>-->
+<!--              <mat-icon matDatepickerToggleIcon class="timer">alarm</mat-icon>-->
+<!--            </mat-datepicker-toggle>-->
+<!--            <ngx-material-timepicker #fullTime2></ngx-material-timepicker>-->
+<!--          </mat-form-field>-->
 
           <mat-form-field appearance="outline">
             <mat-label>Гранулярность</mat-label>
@@ -115,11 +115,11 @@
       </mat-card>
     </div>
 
-    <ag-charts-angular
-      *ngIf="report"
-      style="height: 100%"
-      [options]="options"
-    ></ag-charts-angular>
+<!--    <ag-charts-angular-->
+<!--      *ngIf="report"-->
+<!--      style="height: 100%"-->
+<!--      [options]="options"-->
+<!--    ></ag-charts-angular>-->
   </div>
 
 </div>

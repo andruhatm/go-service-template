@@ -4,10 +4,10 @@ import { LoginPage } from './pages/login/login.page';
 import {SignUpPage} from './pages/sign-up/sign-up.page';
 
 const routes: Routes = [
-  {
-    path: 'login',
-    component: LoginPage,
-  },
+  // {
+  //   path: 'login',
+  //   component: LoginPage,LoginPage
+  // },
   {
     path: 'signup',
     component: SignUpPage,

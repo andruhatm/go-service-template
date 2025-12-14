@@ -14,7 +14,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
-import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDividerModule } from '@angular/material/divider';
 import {MatTableModule} from "@angular/material/table";
@@ -36,7 +35,6 @@ import {MatSortModule} from "@angular/material/sort";
     MatCardModule,
     MatDatepickerModule,
     MatIconModule,
-    NgxMaterialTimepickerModule.setOpts('ru-RU'),
     MatAutocompleteModule,
     MatDividerModule,
     MatTableModule,

@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {EventCategory} from "../../../../features/other-model/category.model";
-import {AgChartOptions} from 'ag-charts-community';
 import {getData} from "./data";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {delay} from "rxjs/operators";
@@ -12,34 +11,34 @@ import {delay} from "rxjs/operators";
 })
 export class ReportpageComponent implements OnInit {
 
-  public options: AgChartOptions;
+  // public options: AgChartOptions;
 
   constructor(private readonly fb: FormBuilder) {
-    this.options = {
-      autoSize: true,
-      data: getData(),
-      title: {
-        text: 'Результат',
-      },
-      // subtitle: {
-      //   text: '2008-2020',
-      // },
-      series: [
-        {
-          xKey: 'year',
-          yKey: 'visitors',
-          yName: 'RRCConnEstabSucc0'
-        },
-        {
-          xKey: 'year',
-          yKey: 'visitors1',
-          yName: 'RRCSetupSuccessRate'
-        },
-      ],
-      legend: {
-        enabled: true,
-      },
-    };
+    // this.options = {
+    //   autoSize: true,
+    //   data: getData(),
+    //   title: {
+    //     text: 'Результат',
+    //   },
+    //   // subtitle: {
+    //   //   text: '2008-2020',
+    //   // },
+    //   series: [
+    //     {
+    //       xKey: 'year',
+    //       yKey: 'visitors',
+    //       yName: 'RRCConnEstabSucc0'
+    //     },
+    //     {
+    //       xKey: 'year',
+    //       yKey: 'visitors1',
+    //       yName: 'RRCSetupSuccessRate'
+    //     },
+    //   ],
+    //   legend: {
+    //     enabled: true,
+    //   },
+    // };
   }
 
   metric = true;

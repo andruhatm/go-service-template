@@ -1,8 +1,6 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { CurrentUserService } from '../../../core/auth/current-user.service';
-import { RefreshUserService } from '../../../core/auth/refresh-user.service';
 import { Router } from '@angular/router';
-import { LoggedUser } from '../../../core/auth/current-user.model';
 
 @Component({
   selector: 'app-user-menu',
@@ -13,7 +11,6 @@ export class UserMenuComponent implements OnInit {
   user$ = this.currentUserService.user$;
   constructor(
     private readonly router: Router,
-    private readonly getUserService: RefreshUserService,
     private readonly currentUserService: CurrentUserService
   ) {}
 

@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {EventCategory} from "../../../../features/other-model/category.model";
-import {AgChartOptions} from 'ag-charts-community';
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {delay} from "rxjs/operators";
 
@@ -11,7 +10,7 @@ import {delay} from "rxjs/operators";
 })
 export class AnomalypageComponent {
 
-  public options: AgChartOptions;
+  // public options: AgChartOptions;
 
   constructor(private readonly fb: FormBuilder) {
   //   this.options = {

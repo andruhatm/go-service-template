@@ -7,7 +7,7 @@ const routerOptions: ExtraOptions = {
   onSameUrlNavigation: 'reload',
 };
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: 'catalog',
     loadChildren: () => import('./routed/catalog/catalog.module').then((m) => m.CatalogModule)
