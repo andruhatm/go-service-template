@@ -6,7 +6,7 @@ import {SignUpPage} from './pages/sign-up/sign-up.page';
 const routes: Routes = [
   // {
   //   path: 'login',
-  //   component: LoginPage,LoginPage
+  //   component: LoginPage,LoginPageww
   // },
   {
     path: 'signup',

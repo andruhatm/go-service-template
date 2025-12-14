@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -19,8 +19,8 @@ import {KpiDialogComponent} from "./routed/catalog/pages/metric-catalog/metric-c
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {RouterModule} from "@angular/router";
 import { NgOptimizedImage } from '@angular/common';
-// import {KpiDialogComponent} from './routed/catalog/pages/kpidialog/dialog.component';
-
+import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular'
+import { initializeKeycloak } from './keycloak-init';
 
 // export const config: CloudinaryConfiguration = cloudinaryConfiguration;
 
@@ -33,6 +33,7 @@ import { NgOptimizedImage } from '@angular/common';
     RouterModule,
     BrowserAnimationsModule,
     SharedModule,
+    KeycloakAngularModule,
     HttpClientModule,
     FeedModule,
     CurrentUserModule,
@@ -44,8 +45,15 @@ import { NgOptimizedImage } from '@angular/common';
     MatButtonModule,
     NgOptimizedImage
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeKeycloak,
+      multi: true,
+      deps: [KeycloakService],
+    },
+    KeycloakService,
+  ],
   bootstrap: [AppComponent]
-  // entryComponents: [DialogComponent, DialogLimitationsPremComponent],
 })
 export class AppModule {}

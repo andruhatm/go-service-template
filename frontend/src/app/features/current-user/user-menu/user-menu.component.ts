@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./user-menu.component.sass']
 })
 export class UserMenuComponent implements OnInit {
-  user$ = this.currentUserService.user$;
+  // user$ = this.currentUserService.user$;
   constructor(
     private readonly router: Router,
     private readonly currentUserService: CurrentUserService

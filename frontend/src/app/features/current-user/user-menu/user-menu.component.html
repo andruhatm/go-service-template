@@ -1,24 +1,24 @@
-<ng-container *ngIf="user$ | async as user">
-  <ng-container *ngIf="user.authenticated; else anonymousMenu">
-      <div class="header__menu-btn" data-dropdown-btn="menu">
-        <div class="header__user-btn" data-dropdown-btn="user">
-          {{user.username}}<i class="icon-Arrow_Below"></i>
-        </div>
-      </div>
-      <nav class="dropdown dropdown--design-01" style="margin-top: 30px" data-dropdown-list="user">
-        <div *ngIf="this.user.authenticated">
-          <ul class="dropdown__catalog col-form-label">
-            <li class="col-xs-6 "><a routerLinkActive="active" routerLink="/personal-cabinet">Личный кабинет</a></li>
-            <li class="col-xs-6 "><a routerLinkActive="active" routerLink="/chat">Чат</a></li>
-            <li class="col-xs-6"><a  routerLinkActive="active-link" exact (click)="handleLogoutClick()" routerLink="/">Выйти</a></li>
-          </ul>
-        </div>
-      </nav>
-  </ng-container>
+<!--<ng-container *ngIf="user$ | async as user">-->
+<!--  <ng-container *ngIf="user.authenticated; else anonymousMenu">-->
+<!--      <div class="header__menu-btn" data-dropdown-btn="menu">-->
+<!--        <div class="header__user-btn" data-dropdown-btn="user">-->
+<!--          {{user.username}}<i class="icon-Arrow_Below"></i>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <nav class="dropdown dropdown&#45;&#45;design-01" style="margin-top: 30px" data-dropdown-list="user">-->
+<!--        <div *ngIf="this.user.authenticated">-->
+<!--          <ul class="dropdown__catalog col-form-label">-->
+<!--            <li class="col-xs-6 "><a routerLinkActive="active" routerLink="/personal-cabinet">Личный кабинет</a></li>-->
+<!--            <li class="col-xs-6 "><a routerLinkActive="active" routerLink="/chat">Чат</a></li>-->
+<!--            <li class="col-xs-6"><a  routerLinkActive="active-link" exact (click)="handleLogoutClick()" routerLink="/">Выйти</a></li>-->
+<!--          </ul>-->
+<!--        </div>-->
+<!--      </nav>-->
+<!--  </ng-container>-->
 
-  <ng-template #anonymousMenu>
-    <a mat-raised-button color="primary" routerLink="/auth/signup"> Регистрация </a>
-    <a mat-flat-button color="primary" style="background-color: #f9bc64" routerLink="/auth/login"> Вход </a>
-  </ng-template>
+<!--  <ng-template #anonymousMenu>-->
+<!--    <a mat-raised-button color="primary" routerLink="/auth/signup"> Регистрация </a>-->
+<!--    <a mat-flat-button color="primary" style="background-color: #f9bc64" routerLink="/auth/login"> Вход </a>-->
+<!--  </ng-template>-->
 
-</ng-container>
+<!--</ng-container>-->

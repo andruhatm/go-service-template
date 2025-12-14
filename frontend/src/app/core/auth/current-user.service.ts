@@ -29,15 +29,15 @@ export class AnonymousUserImpl implements Anonymous {
 
 export class CurrentUserImpl implements LoggedUser {
   authenticated: true = true;
-  readonly userId = this.profile.userId;
-  readonly username = this.profile.username;
-  readonly email = this.profile.email;
-  readonly firstName = this.profile.firstName;
-  readonly lastName = this.profile.lastName;
-  readonly informationAboutYourself = this.profile.informationAboutYourself;
-  readonly categories = this.profile.categories;
+  readonly userId = this['profile'].userId;
+  readonly username = this['profile'].username;
+  readonly email = this['profile'].email;
+  readonly firstName = this['profile'].firstName;
+  readonly lastName = this['profile'].lastName;
+  readonly informationAboutYourself = this['profile'].informationAboutYourself;
+  readonly categories = this['profile'].categories;
 
-  public roles: Set<Role> = new Set(this.profile.roles);
+  public roles: Set<Role> = new Set(this['profile'].roles);
 
   constructor(readonly profile: ExistingUser) {}
 
@@ -76,59 +76,7 @@ export class CurrentUserService {
       .pipe(tap(() => this.user$.next(new AnonymousUserImpl())));
   }
 
-  createUser(
-    username: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    // id_photo: string,
-    country: CountryModel,
-    cityDTO: CityModel
-  ): Observable<void> {
-    const data: NewUser = {
-      username,
-      password,
-      firstName,
-      lastName,
-      email,
-      country,
-      cityDTO
-    };
-    return this.http.post<void>(`${environment.api}/user/`, data).pipe(
-      catchError((err) => {
-        console.log('error caught in service');
-        return throwError(err);
-      })
-    );
-  }
 
-  setUser(profile: ExistingUser | undefined): void {
-    if (profile == undefined) {
-      this.user$.next(new AnonymousUserImpl());
-    } else {
-      this.user$.next(new CurrentUserImpl(profile));
-    }
-  }
 
-  getAuth(code: string, uuid: string | undefined): Observable<any> {
-    const body = { code, uuid };
-    return this.http.post(`api/auth/code`, body, {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    });
-  }
 
-  getUuid(): string | null {
-    const req = new XMLHttpRequest();
-    // @ts-ignore
-    req.open('GET', document.location, false);
-    req.send(null);
-    return req.getResponseHeader('Uuid');
-  }
-
-  logIn(): boolean {
-    return localStorage.getItem('auth_token') !== null;
-  }
 }
