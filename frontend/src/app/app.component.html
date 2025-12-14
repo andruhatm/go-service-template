@@ -1,4 +1,4 @@
-<div *ngIf="router.url!=='/auth/signup' && router.url!=='/auth/login'">
+<div>
   <header>
     <div class="header js-header js-dropdown">
       <div class="container">
@@ -14,12 +14,12 @@
           <!--        </nav>-->
         </div>
         <!--      (click)="tabClick('recs')-->
-        <div *ngIf="this.user.authenticated" class="header__create"><a routerLink='/inventory'>Обьекты мониторинга</a></div>
-        <div *ngIf="this.user.authenticated" class="header__create"><a routerLink='/anomaly'>Пронозирование</a></div>
-        <div *ngIf="this.user.authenticated" class="header__create"><a routerLink='/reports'>Отчет</a></div>
-        <div *ngIf="this.user.authenticated" class="header__create"><a routerLink='/catalog'>Каталог метрик</a></div>
-        <div *ngIf="this.user.authenticated" class="header__create"><a routerLink='/tickets'>Задачи</a></div>
-        <div *ngIf="this.user.authenticated" class="header__create"><a routerLink='/ems/add-ems' mat-flat-button color="primary" style="background-color: #1f76d5">Добавить EMS</a></div>
+        <div *ngIf="this.isLoggedIn" class="header__create"><a routerLink='/inventory'>Обьекты мониторинга</a></div>
+        <div *ngIf="this.isLoggedIn" class="header__create"><a routerLink='/anomaly'>Пронозирование</a></div>
+        <div *ngIf="this.isLoggedIn" class="header__create"><a routerLink='/reports'>Отчет</a></div>
+        <div *ngIf="this.isLoggedIn" class="header__create"><a routerLink='/catalog'>Каталог метрик</a></div>
+        <div *ngIf="this.isLoggedIn" class="header__create"><a routerLink='/tickets'>Задачи</a></div>
+        <div *ngIf="this.isLoggedIn" class="header__create"><a routerLink='/ems/add-ems' mat-flat-button color="primary" style="background-color: #1f76d5">Добавить EMS</a></div>
         <!--      <div *ngIf="this.user.authenticated" class="header__menu">-->
         <!--          <div class="header__menu-btn" data-dropdown-btn="menu">Мои события<i class="icon-Menu_Icon"></i></div>-->
         <!--          <nav class="dropdown dropdown&#45;&#45;design-01" data-dropdown-list="menu">-->
@@ -43,7 +43,7 @@
   </header>
 </div>
 <router-outlet></router-outlet>
-<div *ngIf="router.url!=='/auth/signup' && router.url!=='/auth/login'">
+<div>
   <footer>
     <div class="footer js-dropdown">
       <div class="container">

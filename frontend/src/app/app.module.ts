@@ -15,7 +15,6 @@ import { MatInputModule } from '@angular/material/input';
 import { DialogModule } from './routed/dialog/dialog.module';
 
 import { MatButtonModule } from '@angular/material/button';
-import {KpiDialogComponent} from "./routed/catalog/pages/metric-catalog/metric-catalog.component";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {RouterModule} from "@angular/router";
 import { NgOptimizedImage } from '@angular/common';

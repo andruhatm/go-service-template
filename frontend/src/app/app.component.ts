@@ -6,29 +6,7 @@ import { first } from 'rxjs/operators'; // Для вызова вашего Go A
 
 @Component({
   selector: 'app-root',
-  template: `
-    <h1>Интеграция с Keycloak</h1>
-    <div *ngIf="!isLoggedIn">
-      <p>Вы не авторизованы.</p>
-      <button (click)="login()">Войти через Keycloak</button>
-    </div>
-    <div *ngIf="isLoggedIn">
-      <p>Привет, {{ username }}!</p>
-      <button (click)="logout()">Выйти</button>
-      <button (click)="getToken()">Получить Access Token</button>
-      <button (click)="callApi()">Вызвать Go API (защищенный эндпоинт)</button>
-
-      <div *ngIf="token">
-        <h3>Ваш Access Token:</h3>
-        <textarea rows="5" cols="50" [value]="token" readonly></textarea>
-      </div>
-
-      <div *ngIf="apiResponse">
-        <h3>Ответ от Go API:</h3>
-        <pre>{{ apiResponse | json }}</pre>
-      </div>
-    </div>
-  `,
+  templateUrl: 'app.component.html',
   styles: [`
     div { margin-bottom: 10px; }
     button { margin-right: 10px; padding: 8px 15px; cursor: pointer; }

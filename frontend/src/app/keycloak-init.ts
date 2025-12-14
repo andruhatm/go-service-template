@@ -9,9 +9,11 @@ export function initializeKeycloak(keycloak: KeycloakService) {
         clientId: 'spa-client'      // ID вашего клиента SPA в Keycloak
       },
       initOptions: {
-        onLoad: 'check-sso', // 'login-required' для обязательной авторизации при загрузке, 'check-sso' для проверки сессии
+        onLoad: 'login-required', // 'login-required' для обязательной авторизации при загрузке, 'check-sso' для проверки сессии
         silentCheckSsoRedirectUri:
-          window.location.origin + '/assets/silent-check-sso.html'
+          window.location.origin + '/assets/silent-check-sso.html',
+        enableLogging: true,
+        flow: 'standard'
       },
       enableBearerInterceptor: true, // Включает перехватчик для автоматического добавления токена к HTTP-запросам
     });

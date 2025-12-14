@@ -2,6 +2,7 @@ import {NotFoundPage} from "./routed/shared/pages/not-found-page/not-found-.page
 import {HomePage} from "./routed/shared/pages/home-page/home.page";
 import {ExtraOptions, RouterModule, Routes} from "@angular/router";
 import {NgModule} from "@angular/core";
+import { KeycloakPage } from './routed/shared/pages/keycloak-page/keycloak.page';
 
 const routerOptions: ExtraOptions = {
   onSameUrlNavigation: 'reload',
@@ -31,6 +32,10 @@ export const routes: Routes = [
   {
     path: 'about',
     component: HomePage
+  },
+  {
+    path: 'keycloak',
+    component: KeycloakPage
   },
   {
     path: '**',
