@@ -1,21 +1,22 @@
 <div class="container feed">
 
 
-  <div class="nav">
+
     <div class="nav__categories js-dropdown">
       <div class="nav__select">
-        <div class="btn-select" data-dropdown-btn="categories">Спецификация</div>
-        <nav class="dropdown dropdown--design-01" data-dropdown-list="categories">
-          <ul class="dropdown__catalog row">
-            <ul *ngFor="let category of categories" class="dropdown__catalog row">
-              <li class="col-xs-6"><a (click)="handleCategoryClick(category)" class="category"><i
-                [class]="category.color"></i>{{ category.nameCategory }}</a>
-              </li>
-            </ul>
-          </ul>
-        </nav>
-      </div>
-      <button mat-flat-button color="primary" (click)="openDialog()">Создать КПИ</button>
+<!--        <div class="btn-select" data-dropdown-btn="categories">Спецификация</div>-->
+        <h3>Метрики</h3>
+<!--        <nav class="dropdown dropdown&#45;&#45;design-01" data-dropdown-list="categories">-->
+<!--          <ul class="dropdown__catalog row">-->
+<!--            <ul *ngFor="let category of categories" class="dropdown__catalog row">-->
+<!--              <li class="col-xs-6"><a (click)="handleCategoryClick(category)" class="category"><i-->
+<!--                [class]="category.color"></i>{{ category.nameCategory }}</a>-->
+<!--              </li>-->
+<!--            </ul>-->
+<!--          </ul>-->
+<!--        </nav>-->
+<!--      </div>-->
+      <button mat-flat-button color="primary" (click)="openDialog()">Создать метрику</button>
     </div>
   </div>
 

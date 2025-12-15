@@ -5,3 +5,14 @@
 .mat-elevation-z8 {
   box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.16);
 }
+
+.nav__select {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; /* важно! */
+}
+
+.nav__select h3 {
+  margin: 0; /* убирает отступы у заголовка */
+}

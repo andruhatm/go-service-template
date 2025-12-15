@@ -14,6 +14,17 @@ table {
 /*  !*padding: 10px;*!*/
 /*}*/
 
+.nav__select {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; /* важно! */
+}
+
+.nav__select h3 {
+  margin: 0; /* убирает отступы у заголовка */
+}
+
 table {
   width: 100%;
 }

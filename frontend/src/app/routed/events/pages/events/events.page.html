@@ -4,20 +4,23 @@
 <!--&lt;!&ndash;  </mat-toolbar-row>&ndash;&gt;-->
 <!--</mat-toolbar>-->
 <div class="container feed">
-  <div class="nav">
+
     <div class="nav__categories js-dropdown">
       <div class="nav__select">
-        <h1>Текущие подписки</h1>
+        <h3>Текущие подписки</h3>
+        <nav class="dropdown dropdown--design-01" data-dropdown-list="categories">
+        </nav>
       </div>
+      <a routerLink='/ems/add-ems' mat-flat-button color="primary">Добавить</a>
     </div>
-  </div>
+
   <div class="posts">
 
     <div class="posts__body">
       <table mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort>
 
         <ng-container matColumnDef="id">
-          <th mat-hweader-cell *matHeaderCellDef>Title</th>
+          <th mat-header-cell *matHeaderCellDef>Title</th>
           <td mat-cell *matCellDef="let item"> {{item.title}} </td>
         </ng-container>
 
