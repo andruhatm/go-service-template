@@ -22,7 +22,7 @@
 
           <mat-form-field  appearance="outline">
             <mat-label>SNMP IP адрес</mat-label>
-            <input class="message-input" matInput formControlName="snmpIP" required />
+            <input class="message-input" matInput formControlName="host" required />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -60,21 +60,6 @@
             <input class="message-input" matInput formControlName="protocol" required />
           </mat-form-field>
 
-
-          <hr class="my-2" />
-          <div *ngIf="imageUpload !== false ">
-            <ng-container *ngIf="secure_url.substr(0, 4)==='http' else noHttp">
-              <img class="img-fluid" src="{{secure_url}}" alt="imageHeader">
-              <br>
-              <hr>
-            </ng-container>
-            <ng-template #noHttp>
-              <img class="img-fluid" src="https://{{secure_url}}" alt="imageHeader">
-              <br>
-              <hr>
-            </ng-template>
-          </div>
-          <!--          <h3>Value: {{chipsControlValue$ | async}}</h3>-->
         </mat-card-content>
 
         <mat-card-actions align="end">

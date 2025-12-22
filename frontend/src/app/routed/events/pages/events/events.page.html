@@ -24,34 +24,34 @@
           <td mat-cell *matCellDef="let item"> {{item.title}} </td>
         </ng-container>
 
-        <ng-container matColumnDef="snmpIP" id="snmpIP">
-          <th mat-header-cell *matHeaderCellDef>SNMP IP адрес</th>
-          <td mat-cell *matCellDef="let item"> {{item.snmpIP}}</td>
+        <ng-container matColumnDef="source_name" id="source_name">
+          <th mat-header-cell *matHeaderCellDef>Название источника</th>
+          <td mat-cell *matCellDef="let item"> {{item.source_name}}</td>
         </ng-container>
 
-        <ng-container matColumnDef="snmpPort" id="snmpPort">
-          <th mat-header-cell *matHeaderCellDef>SNMP Порт</th>
-          <td mat-cell *matCellDef="let item"> {{item.snmpPort}}</td>
+        <ng-container matColumnDef="description" id="description">
+          <th mat-header-cell *matHeaderCellDef>Описание</th>
+          <td mat-cell *matCellDef="let item"> {{item.description}}</td>
         </ng-container>
 
-        <ng-container matColumnDef="community" id="community">
-          <th mat-header-cell *matHeaderCellDef>Уровень доступа</th>
-          <td mat-cell *matCellDef="let item"> {{item.community}}</td>
+        <ng-container matColumnDef="connection_type" id="connection_type">
+          <th mat-header-cell *matHeaderCellDef>Тип подключения</th>
+          <td mat-cell *matCellDef="let item"> {{item.connection_type}}</td>
         </ng-container>
 
-        <ng-container matColumnDef="FTPip" id="FTPip">
-          <th mat-header-cell *matHeaderCellDef>FTP IP адрес</th>
-          <td mat-cell *matCellDef="let item"> {{item.FTPip}}</td>
+        <ng-container matColumnDef="host" id="host">
+          <th mat-header-cell *matHeaderCellDef>Хост/Адрес</th>
+          <td mat-cell *matCellDef="let item"> {{item.host}}</td>
         </ng-container>
 
         <ng-container matColumnDef="FTPport" id="FTPport">
-          <th mat-header-cell *matHeaderCellDef>FTP порт</th>
+          <th mat-header-cell *matHeaderCellDef>Порт</th>
           <td mat-cell *matCellDef="let item"> {{item.FTPport}}</td>
         </ng-container>
 
-        <ng-container matColumnDef="pathTofiles" id="pathTofiles">
+        <ng-container matColumnDef="file_path" id="file_path">
           <th mat-header-cell *matHeaderCellDef>Путь к файлам</th>
-          <td mat-cell *matCellDef="let item"> {{item.pathTofiles}}</td>
+          <td mat-cell *matCellDef="let item"> {{item.file_path}}</td>
         </ng-container>
 
         <ng-container matColumnDef="username" id="username">
@@ -64,15 +64,24 @@
           <td mat-cell *matCellDef="let item"> {{item.password}}</td>
         </ng-container>
 
-        <ng-container matColumnDef="protocol" id="protocol">
-          <th mat-header-cell *matHeaderCellDef>Протокол</th>
-          <td mat-cell *matCellDef="let item"> {{item.protocol}}</td>
+        <ng-container matColumnDef="schedule" id="schedule">
+          <th mat-header-cell *matHeaderCellDef>Частота сбора</th>
+          <td mat-cell *matCellDef="let item"> {{item.schedule}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="edit">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Редактирование</th>
+          <td mat-cell *matCellDef="let item = index">
+            <button mat-icon-button (click)="editCart(item)">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="delete">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Удаление</th>
-          <td mat-cell *matCellDef="let i = index">
-            <button mat-icon-button class="removeCart" (click)="removeCart(i)">
+          <td mat-cell *matCellDef="let item = index">
+            <button mat-icon-button class="removeCart" (click)="removeCart(item)">
               <mat-icon>close</mat-icon>
             </button>
           </td>

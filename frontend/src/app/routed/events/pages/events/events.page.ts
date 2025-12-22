@@ -1,148 +1,119 @@
-import {Component, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {Title} from '@angular/platform-browser';
-import {MatTableDataSource} from '@angular/material/table';
-import {Ran1} from "../../../feed/components/feed/feed.component";
-
-
-export interface Subs {
-  id: number;
-  snmpIP: string;
-  snmpPort: string;
-  community: string;
-  FTPip: string,
-  FTPport: string,
-  pathTofiles: string,
-  username: string,
-  password: string,
-  protocol: string
-}
-
-const ELEMENT_DATA: Subs[] = [
-  {
-    id: 1,
-    snmpIP: 'localhost',
-    snmpPort: '21',
-    community: 'public',
-    FTPip: 'localhost',
-    FTPport: '21',
-    pathTofiles: '/data',
-    username: 'admin',
-    password: 'root',
-    protocol: 'aes'
-  },
-  {
-    id: 2,
-    snmpIP: '11.14.200.112',
-    snmpPort: '21',
-    community: 'public',
-    FTPip: '11.14.200.112',
-    FTPport: '21',
-    pathTofiles: '/home/ems1/data',
-    username: 'admin',
-    password: 'root',
-    protocol: 'aes'
-  },
-];
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Title } from '@angular/platform-browser';
+import { MatTableDataSource } from '@angular/material/table';
+import { EmsService, Subs } from '../ems.service';
 
 @Component({
   templateUrl: './events.page.html',
   styleUrls: ['./events.page.css']
 })
 export class EventsPage implements OnInit {
-  constructor(private readonly router: Router, public titleStr: Title) {
+  dataSource = new MatTableDataSource<Subs>([]);
+  displayedColumns = [
+    'source_name',
+    'description',
+    'connection_type',
+    'host',
+    'FTPport',
+    'file_path',
+    'username',
+    'password',
+    'schedule',
+    'edit',
+    'delete'
+  ];
+
+  constructor(
+    private readonly router: Router,
+    public titleStr: Title,
+    private readonly emsService: EmsService
+  ) {
     this.titleStr.setTitle('Подписки');
   }
 
-  amount: number;
-  data: any = [];
-  id: number = 2;
-  title: string = 'test';
-
-  dataSource = ELEMENT_DATA;
-
-  columns = [
-    {
-      columnDef: 'snmpIP',
-      header: 'Адрес SNMP',
-      cell: (element: Subs) => `${element.snmpIP}`,
-    },
-    {
-      columnDef: 'snmpPort',
-      header: 'Порт SNMP',
-      // cell: (element: Subs) => `${element.snmpIP}`,
-    },
-    {
-      columnDef: 'community',
-      header: 'Поддерживаемая технология',
-      // cell: (element: Ran1) => `${element.technology}`,
-    },
-    {
-      columnDef: 'FTPip',
-      header: 'Платформа',
-      // cell: (element: Ran1) => `${element.platform}`,
-    },
-    {
-      columnDef: 'FTPport',
-      header: 'Подсеть',
-      // cell: (element: Ran1) => `${element.network}`,
-    },
-    {
-      columnDef: 'pathTofiles',
-      header: 'Производитель',
-      // cell: (element: Ran1) => `${element.manufactorer}`,
-    },
-    {
-      columnDef: 'username',
-      header: 'Статус',
-      // cell: (element: Ran1) => `${element.manufactorer}`,
-    },
-    {
-      columnDef: 'password',
-      header: 'Адрес подключения',
-      // cell: (element: Ran1) => `${element.ip}`,
-    },
-    {
-      columnDef: 'protocol',
-      header: 'Адрес подключения',
-      // cell: (element: Ran1) => `${element.ip}`,
-    },
-    {
-      columnDef: 'delete',
-      header: 'Удаление',
-      // cell: (element: Ran1) => `${element.ip}`,
-    },
-  ];
-  displayedColumns = this.columns.map(c => c.columnDef);
-  // displayedColumns: string[] = ['snmpIP', 'snmpPort', 'community', 'FTPip','FTPport','pathTofiles','username','password','protocol'];
-
-  // tslint:disable-next-line:typedef
-  removeCart(index: number) {
-    // this.data.slice(index, 1);
-    console.log(index);
-    this.updateDataSource();
-  }
-
-  // tslint:disable-next-line:typedef
-  updateDataSource() {
-    this.dataSource = [{
-      id: 2,
-      snmpIP: '11.14.200.112',
-      snmpPort: '21',
-      community: 'public',
-      FTPip: '11.14.200.112',
-      FTPport: '21',
-      pathTofiles: '/home/ems1/data',
-      username: 'admin',
-      password: 'root',
-      protocol: 'aes'
-    }];
-  }
-
   ngOnInit(): void {
+    this.loadData();
   }
 
+  private loadData(): void {
+    // Stub data for manual testing
+    const stubData: Subs[] = [
+      {
+        id: 1,
+        source_name: 'Test Source 1',
+        description: 'Test subscription for FTP connection',
+        connection_type: 'FTP',
+        host: 'ftp.example.com',
+        FTPport: '21',
+        file_path: '/data/files',
+        username: 'testuser1',
+        password: 'password123',
+        schedule: '0 0 * * *'
+      },
+      {
+        id: 2,
+        source_name: 'Test Source 2',
+        description: 'Test subscription for SFTP connection',
+        connection_type: 'SFTP',
+        host: 'sftp.example.com',
+        FTPport: '22',
+        file_path: '/uploads/reports',
+        username: 'testuser2',
+        password: 'securepass456',
+        schedule: '0 12 * * *'
+      },
+      {
+        id: 3,
+        source_name: 'Test Source 3',
+        description: 'Test subscription for local file system',
+        connection_type: 'LOCAL',
+        host: 'localhost',
+        FTPport: '0',
+        file_path: '/var/data/input',
+        username: '',
+        password: '',
+        schedule: '*/30 * * * *'
+      }
+    ];
+    
+    this.dataSource.data = stubData;
+    
+    // Uncomment below to use real API call
+    // this.emsService.getAll().subscribe({
+    //   next: (data) => this.dataSource.data = data,
+    //   error: (err) => console.error('Load EMS error', err)
+    // });
+  }
+
+  editCart(index: number): void {
+    const item = this.dataSource.data[index];
+    if (!item) { return; }
+    // Передаём состояние при навигации (editMode + item)
+    this.router.navigate(['/ems/add-ems'], { state: { editMode: true, item } });
+  }
+
+  removeCart(index: number): void {
+    const item = this.dataSource.data[index];
+    if (!item) { return; }
+
+    // Простейшая подтверждалка. При желании замените на MatDialog.
+    if (!confirm(`Удалить подписку "${item.source_name}"?`)) { return; }
+
+    this.emsService.delete(item.id).subscribe({
+      next: () => {
+        // Удаляем локально из dataSource
+        this.dataSource.data = this.dataSource.data.filter(d => d.id !== item.id);
+      },
+      error: (err) => {
+        console.error('Delete error', err);
+        // Здесь можно показать Snackbar/Alert
+      }
+    });
+  }
+
+  // Пример кнопки добавления, если нужно
   handleEventCreate(): void {
-    this.router.navigate([`/events/add-event`]).then(() => this.router.onSameUrlNavigation);
+    this.router.navigate(['/ems/add-ems']);
   }
 }
