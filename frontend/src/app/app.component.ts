@@ -19,11 +19,13 @@ export class AppComponent implements OnInit {
   username: string | undefined;
   token: string = '';
   apiResponse: any;
+  userAdmin: boolean = false;
 
   constructor(private keycloakService: KeycloakService, private http: HttpClient) {}
 
   async ngOnInit() {
     this.isLoggedIn = await this.keycloakService.isLoggedIn();
+    this.userAdmin = this.keycloakService.isUserInRole('ROLE_ADMIN');
 
     if (this.isLoggedIn) {
       const userProfile = await this.keycloakService.loadUserProfile();

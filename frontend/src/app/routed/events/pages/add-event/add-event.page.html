@@ -12,61 +12,74 @@
         <mat-card-content class="content">
           <div class="row mb-3 align-items-center justify-content-between">
             <div class="col-auto">
-              <mat-card-title class="create__title"
-              ><img src="fonts/icons/main/New_Topic.svg" alt="New topic" />Новая подписка</mat-card-title>
+              <mat-card-title class="create__title">
+                <img src="fonts/icons/main/New_Topic.svg" alt="New topic" />
+                {{ isEditMode ? 'Редактировать подписку' : 'Новая подписка' }}
+              </mat-card-title>
             </div>
             <div class="col-auto">
               <a mat-flat-button routerLink="/ems/ems-list" class="alert-warning btn">Показать текущие подписки</a>
             </div>
           </div>
 
-          <mat-form-field  appearance="outline">
-            <mat-label>SNMP IP адрес</mat-label>
+          <mat-form-field appearance="outline">
+            <mat-label>Имя источника</mat-label>
+            <input class="message-input" matInput formControlName="source_name" required />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Описание</mat-label>
+            <textarea class="message-input" matInput formControlName="description" rows="3"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Тип соединения</mat-label>
+            <mat-select formControlName="connection_type" required>
+              <mat-option value="FTP">FTP</mat-option>
+              <mat-option value="SFTP">SFTP</mat-option>
+              <mat-option value="LOCAL">LOCAL</mat-option>
+              <mat-option value="HTTP">HTTP</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Хост</mat-label>
             <input class="message-input" matInput formControlName="host" required />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>SNMP Порт</mat-label>
-            <input class="message-input" matInput formControlName="snmpPort" required />
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Уровень доступа</mat-label>
-            <input class="message-input" matInput formControlName="community" required />
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>FTP IP адрес</mat-label>
-            <input class="message-input" matInput formControlName="FTPip" required />
+            <mat-label>Порт</mat-label>
+            <input class="message-input" matInput formControlName="FTPport" required />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Путь к файлам</mat-label>
-            <input class="message-input" matInput formControlName="pathTofiles" required />
+            <input class="message-input" matInput formControlName="file_path" required />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Логин</mat-label>
-            <input class="message-input" matInput formControlName="username" required />
+            <input class="message-input" matInput formControlName="username" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Пароль</mat-label>
-            <input class="message-input" matInput formControlName="password" required />
+            <input class="message-input" matInput type="password" formControlName="password" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Протокол аутентификации</mat-label>
-            <input class="message-input" matInput formControlName="protocol" required />
+            <mat-label>Расписание (cron)</mat-label>
+            <input class="message-input" matInput formControlName="schedule" placeholder="0 0 * * *" required />
           </mat-form-field>
 
         </mat-card-content>
 
         <mat-card-actions align="end">
           <div class="create__footer">
-            <a mat-flat-button routerLink="/ems-list" class="create__btn-cansel btn">Отмена</a>
-            <button mat-flat-button color="primary" [disabled]="!form.valid" (click)="openDialog()">Создать подписку</button>
-            <!--            <a class="create__btn-create btn btn&#45;&#45;type-02">Создать событие</a>-->
+            <a mat-flat-button routerLink="/ems/ems-list" class="create__btn-cansel btn">Отмена</a>
+            <button mat-flat-button color="primary" type="submit" [disabled]="!form.valid">
+              {{ isEditMode ? 'Обновить подписку' : 'Создать подписку' }}
+            </button>
           </div>
         </mat-card-actions>
       </form>
