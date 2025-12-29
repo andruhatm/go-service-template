@@ -4,7 +4,7 @@ apiCfg:
 logging:
   level: debug
 postgresCfg:
-  - host: db
+  - host: localhost
     port: 5432
     user: user
     password: pass
@@ -12,9 +12,9 @@ postgresCfg:
 sqliteCfg:
   path: "./db"
 victoriaCfg:
-  url: http://victoriametrics:8428
+  url: http://localhost:8428
 keycloakCfg:
-  issuer: http://keycloak:8080/realms/myrealm
+  issuer: http://localhost:8080/realms/myrealm
   client_id: spa-client
   client_secret: jym5bshxscBAQJqBsfo45hphL0oRdhx3
 keycloakAdminCfg:

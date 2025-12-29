@@ -28,12 +28,19 @@ services:
       - "8081:8081"
     environment:
       - DATABASE_URL=postgres://user:pass@db:5432/appdb?sslmode=disable
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=appdb
+      - VICTORIA_URL=http://victoriametrics:8428
       - KEYCLOAK_ISSUER=http://keycloak:8080/realms/myrealm
       - KEYCLOAK_CLIENT_ID=spa-client
       - KEYCLOAK_CLIENT_SECRET=jym5bshxscBAQJqBsfo45hphL0oRdhx3
     depends_on:
       - keycloak
       - db
+      - victoriametrics
   db:
     image: postgres:14
     environment:
@@ -42,6 +49,16 @@ services:
       POSTGRES_PASSWORD: pass
     volumes:
       - app-db-data:/var/lib/postgresql/data
+  victoriametrics:
+    image: victoriametrics/victoria-metrics:latest
+    ports:
+      - "8428:8428"
+    volumes:
+      - victoria-data:/victoria-metrics-data
+    command:
+      - "--storageDataPath=/victoria-metrics-data"
+      - "--httpListenAddr=:8428"
+      - "--retentionPeriod=12"
   frontend:
     build: ./frontend
     ports:
@@ -51,3 +68,4 @@ services:
 volumes:
   keycloak-db-data:
   app-db-data:
+  victoria-data:

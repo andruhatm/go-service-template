@@ -20,6 +20,7 @@ import {RouterModule} from "@angular/router";
 import { NgOptimizedImage } from '@angular/common';
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular'
 import { initializeKeycloak } from './keycloak-init';
+import { TOKEN_INTERCEPTOR } from './core/auth/token.interceptor';
 
 // export const config: CloudinaryConfiguration = cloudinaryConfiguration;
 
@@ -52,6 +53,7 @@ import { initializeKeycloak } from './keycloak-init';
       deps: [KeycloakService],
     },
     KeycloakService,
+    TOKEN_INTERCEPTOR,
   ],
   bootstrap: [AppComponent]
 })

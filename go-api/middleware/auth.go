@@ -12,8 +12,10 @@ import (
 )
 
 type AuthMiddleware struct {
-	verifier *oidc.IDTokenVerifier
-	config   *oauth2.Config
+	verifier    *oidc.IDTokenVerifier
+	provider    *oidc.Provider
+	config      *oauth2.Config
+	keycloakCfg configuration.KeycloakConfig
 }
 
 func NewAuthMiddleware(config configuration.KeycloakConfig) (*AuthMiddleware, error) {
@@ -26,6 +28,8 @@ func NewAuthMiddleware(config configuration.KeycloakConfig) (*AuthMiddleware, er
 
 	oidcConfig := &oidc.Config{
 		ClientID: config.ClientID,
+		// Skip client ID check for access tokens
+		SkipClientIDCheck: true,
 	}
 
 	verifier := provider.Verifier(oidcConfig)
@@ -38,8 +42,10 @@ func NewAuthMiddleware(config configuration.KeycloakConfig) (*AuthMiddleware, er
 	}
 
 	return &AuthMiddleware{
-		verifier: verifier,
-		config:   oauth2Config,
+		verifier:    verifier,
+		provider:    provider,
+		config:      oauth2Config,
+		keycloakCfg: config,
 	}, nil
 }
 
@@ -59,15 +65,15 @@ func (a *AuthMiddleware) Middleware(next http.Handler) http.Handler {
 
 		token := parts[1]
 
-		// Проверка токена
+		// Verify the token - this works for both ID tokens and access tokens with SkipClientIDCheck
 		idToken, err := a.verifier.Verify(r.Context(), token)
 		if err != nil {
-			log.Printf("Failed to verify token: %v", err)
+			log.Printf("Failed to verify token: %v (token length: %d)", err, len(token))
 			http.Error(w, "Invalid token", http.StatusUnauthorized)
 			return
 		}
 
-		// Извлечение claims
+		// Extract claims from the verified token
 		var claims map[string]interface{}
 		if err := idToken.Claims(&claims); err != nil {
 			log.Printf("Failed to parse claims: %v", err)
@@ -75,10 +81,14 @@ func (a *AuthMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Добавление claims в контекст
+		// Log roles for debugging
+		roles := extractRoles(claims)
+		log.Printf("User authenticated - UserID: %v, Roles: %v", claims["sub"], roles)
+
+		// Add claims to context
 		ctx := context.WithValue(r.Context(), "claims", claims)
 		ctx = context.WithValue(ctx, "userID", claims["sub"])
-		ctx = context.WithValue(ctx, "roles", extractRoles(claims))
+		ctx = context.WithValue(ctx, "roles", roles)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

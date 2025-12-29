@@ -1,0 +1,316 @@
+.admin-panel-container {
+  padding: 40px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.loading-container p {
+  margin-top: 20px;
+  color: #666;
+  font-size: 16px;
+}
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.error-card {
+  max-width: 500px;
+  text-align: center;
+}
+
+.error-card mat-card-content {
+  padding: 30px;
+}
+
+.error-card mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+}
+
+.error-card p {
+  margin-bottom: 20px;
+  color: #666;
+  font-size: 16px;
+}
+
+.stats-container {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mb-4 {
+  margin-bottom: 24px;
+}
+
+/* Keycloak Link Card */
+.keycloak-link-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.keycloak-link-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.keycloak-link-card mat-card-header {
+  margin-bottom: 16px;
+}
+
+.keycloak-link-card mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+}
+
+.keycloak-link-card mat-card-title mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.keycloak-link-card mat-card-content {
+  padding: 16px 0;
+}
+
+.realm-info,
+.url-info {
+  margin: 8px 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.realm-info strong,
+.url-info strong {
+  color: white;
+  font-weight: 600;
+}
+
+.keycloak-link-card mat-card-actions {
+  padding: 16px 0 8px 0;
+}
+
+.keycloak-link-card button {
+  background-color: white;
+  color: #667eea;
+  font-weight: 600;
+  padding: 8px 24px;
+}
+
+.keycloak-link-card button:hover {
+  background-color: #f0f0f0;
+}
+
+.keycloak-link-card button mat-icon {
+  margin-right: 8px;
+}
+
+/* Stat Cards */
+.stat-card {
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card mat-card-content {
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.stat-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-icon mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: white;
+}
+
+.users-icon {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.active-users-icon {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.sessions-icon {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.active-sessions-icon {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.offline-icon {
+  background: linear-gradient(135deg, #868f96 0%, #596164 100%);
+}
+
+.clients-icon {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.groups-icon {
+  background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+}
+
+.roles-icon {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.login-icon {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.error-icon {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+}
+
+.success-rate-icon {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.warning-icon {
+  background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #555;
+  margin: 20px 0 10px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.alert-card {
+  border-left: 4px solid #ff6b6b;
+}
+
+.alert-card .stat-value {
+  color: #d9534f;
+}
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 8px 0;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .admin-panel-container {
+    padding: 20px 10px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+  }
+
+  .stat-card mat-card-content {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .stat-icon mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .stat-value {
+    font-size: 28px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+  }
+
+  .keycloak-link-card mat-card-title {
+    font-size: 20px;
+  }
+}
+
+
+

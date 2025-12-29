@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"live/configuration"
+	"live/db/pg"
+	"live/db/victoria"
 	"live/middleware"
 	r "live/router"
 	"net/http"
@@ -25,7 +27,7 @@ func main() {
 	})
 
 	// config Init
-	cfg, err := configuration.InitConfiguration("./configuration.yaml")
+	cfg, err := configuration.InitConfiguration("./configuration.local.yaml")
 	if err != nil {
 		slog.Fatal(err)
 		panic(err)
@@ -34,28 +36,26 @@ func main() {
 
 	// init db's
 	//1 postgres
-	//pgConnStr := "user=user password=password host=localhost port=5432 dbname=mydb sslmode=disable"
-	//pgService, err := pg.NewPostgreSQLService(pgConnStr)
-	//if err != nil {
-	//	slog.Fatalf("Ошибка подключения к PostgreSQL: %v", err)
-	//}
-	//defer pgService.Close()
-	//fmt.Println("Подключено к PostgreSQL")
-	//
-	////2 sqlite
-	//sqliteSvc, err := sqlite.NewSQLiteService(fmt.Sprintf("file:%s?_busy_timeout=5000&_journal_mode=WAL", cfg.SqliteCfg.Path))
-	//if err != nil {
-	//	slog.Fatalf("Ошибка подключения к SQLite: %v", err)
-	//}
-	//defer sqliteSvc.Close()
-	//
-	////3 VictoriaMetrics
-	//vmService, err := victoria.NewVictoriaMetricsService(fmt.Sprintf("%s", cfg.VictoriaCfg.URL), 10*time.Second)
-	//if err != nil {
-	//	fmt.Printf("Ошибка при создании VictoriaMetricsService: %v\n", err)
-	//	return
-	//}
-	//defer vmService.Close()
+	pgConnStr := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=disable",
+		cfg.PostgresCfg[0].User,
+		cfg.PostgresCfg[0].Password,
+		cfg.PostgresCfg[0].Host,
+		cfg.PostgresCfg[0].Port,
+		cfg.PostgresCfg[0].Database)
+	pgService, err := pg.NewPostgreSQLService(pgConnStr)
+	if err != nil {
+		slog.Fatalf("Failed to connect to PostgreSQL: %v", err)
+	}
+	defer pgService.Close()
+	slog.Info("Connected to PostgreSQL successfully")
+
+	//2 VictoriaMetrics
+	vmService, err := victoria.NewVictoriaMetricsService(cfg.VictoriaCfg.URL, 10*time.Second)
+	if err != nil {
+		slog.Fatalf("Failed to create VictoriaMetricsService: %v", err)
+	}
+	defer vmService.Close()
+	slog.Info("Connected to VictoriaMetrics successfully")
 
 	// init keycloak middleware
 	authMiddleware, err := middleware.NewAuthMiddleware(cfg.KeycloakCfg)
@@ -64,7 +64,7 @@ func main() {
 	}
 
 	// init router
-	router := r.GenerateServeMux(*authMiddleware)
+	router := r.GenerateServeMux(*authMiddleware, cfg)
 
 	// run server
 	s := &http.Server{

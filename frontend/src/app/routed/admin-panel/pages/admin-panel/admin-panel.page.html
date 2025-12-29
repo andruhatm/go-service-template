@@ -1,0 +1,259 @@
+<div class="container admin-panel-container">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="page-title">Панель администратора</h1>
+      <p class="page-subtitle">Статистика и управление системой</p>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Загрузка статистики...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error && !loading" class="error-container">
+    <mat-card class="error-card">
+      <mat-card-content>
+        <mat-icon color="warn">error</mat-icon>
+        <p>{{ error }}</p>
+        <button mat-raised-button color="primary" (click)="refreshStats()">
+          Повторить
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div *ngIf="stats && !loading" class="stats-container">
+    <div class="row">
+      <!-- Keycloak Admin Link Card -->
+      <div class="col-12 mb-4">
+        <mat-card class="admin-card keycloak-link-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>admin_panel_settings</mat-icon>
+              Keycloak Админ Консоль
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="realm-info">
+              <strong>Realm:</strong> {{ stats.realmName }}
+            </p>
+            <p class="url-info">
+              <strong>URL:</strong> {{ keycloakAdminUrl }}
+            </p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" (click)="openKeycloakAdmin()">
+              <mat-icon>open_in_new</mat-icon>
+              Открыть Keycloak Консоль
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Total Users Card -->
+      <div class="col-md-6 col-lg-3 mb-4">
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon users-icon">
+              <mat-icon>people</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3 class="stat-value">{{ stats.totalUsers }}</h3>
+              <p class="stat-label">Всего пользователей</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Active Users Card -->
+      <div class="col-md-6 col-lg-3 mb-4">
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon active-users-icon">
+              <mat-icon>person</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3 class="stat-value">{{ stats.activeUsers || 0 }}</h3>
+              <p class="stat-label">Активные пользователи</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Total Sessions Card -->
+      <div class="col-md-6 col-lg-3 mb-4">
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon sessions-icon">
+              <mat-icon>devices</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3 class="stat-value">{{ stats.totalSessions || 0 }}</h3>
+              <p class="stat-label">Всего сессий</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Active Sessions Card -->
+      <div class="col-md-6 col-lg-3 mb-4">
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon active-sessions-icon">
+              <mat-icon>wifi</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3 class="stat-value">{{ stats.activeSessions || 0 }}</h3>
+              <p class="stat-label">Активные сессии</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Authentication Stats Row -->
+    <div class="row" *ngIf="stats.loginEvents !== undefined || stats.loginErrors !== undefined">
+      <div class="col-12 mb-3">
+        <h2 class="section-title">Статистика аутентификации</h2>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-4" *ngIf="stats.loginEvents !== undefined">
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon login-icon">
+              <mat-icon>login</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3 class="stat-value">{{ stats.loginEvents }}</h3>
+              <p class="stat-label">Попытки входа (100 последних)</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-4" *ngIf="stats.loginErrors !== undefined">
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon error-icon">
+              <mat-icon>error_outline</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3 class="stat-value">{{ stats.loginErrors }}</h3>
+              <p class="stat-label">Ошибки входа</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-4" *ngIf="stats.loginEvents && stats.loginEvents > 0">
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon success-rate-icon">
+              <mat-icon>thumb_up</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3 class="stat-value">{{ getSuccessRate() }}%</h3>
+              <p class="stat-label">Успешные входы</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-4" *ngIf="stats.loginErrors && stats.loginErrors > 0">
+        <mat-card class="stat-card alert-card">
+          <mat-card-content>
+            <div class="stat-icon warning-icon">
+              <mat-icon>warning</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3 class="stat-value">{{ getErrorRate() }}%</h3>
+              <p class="stat-label">Процент ошибок</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Additional Stats Row (if available) -->
+    <div class="row" *ngIf="stats.offlineSessions || stats.clientsCount || stats.groupsCount || stats.rolesCount">
+      <div class="col-12 mb-3">
+        <h2 class="section-title">Дополнительная статистика</h2>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-4" *ngIf="stats.clientsCount !== undefined">
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon clients-icon">
+              <mat-icon>apps</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3 class="stat-value">{{ stats.clientsCount }}</h3>
+              <p class="stat-label">Клиенты</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-4" *ngIf="stats.groupsCount !== undefined">
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon groups-icon">
+              <mat-icon>group_work</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3 class="stat-value">{{ stats.groupsCount }}</h3>
+              <p class="stat-label">Группы</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-4" *ngIf="stats.rolesCount !== undefined">
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon roles-icon">
+              <mat-icon>security</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3 class="stat-value">{{ stats.rolesCount }}</h3>
+              <p class="stat-label">Роли</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-4" *ngIf="stats.offlineSessions !== undefined">
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon offline-icon">
+              <mat-icon>cloud_off</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3 class="stat-value">{{ stats.offlineSessions }}</h3>
+              <p class="stat-label">Офлайн сессии</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Refresh Button -->
+    <div class="row">
+      <div class="col-12">
+        <button mat-raised-button color="accent" (click)="refreshStats()">
+          <mat-icon>refresh</mat-icon>
+          Обновить статистику
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

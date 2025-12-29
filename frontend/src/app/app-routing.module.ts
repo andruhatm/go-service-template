@@ -30,6 +30,10 @@ export const routes: Routes = [
     loadChildren: () => import('./routed/report/report.module').then((m) => m.ReportModule)
   },
   {
+    path: 'admin-panel',
+    loadChildren: () => import('./routed/admin-panel/admin-panel.module').then((m) => m.AdminPanelModule)
+  },
+  {
     path: 'about',
     component: HomePage
   },
