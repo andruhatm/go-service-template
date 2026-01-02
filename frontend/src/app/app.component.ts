@@ -27,9 +27,13 @@ export class AppComponent implements OnInit {
     this.isLoggedIn = await this.keycloakService.isLoggedIn();
     this.userAdmin = this.keycloakService.isUserInRole('ROLE_ADMIN');
 
+    console.log('AppComponent - isLoggedIn:', this.isLoggedIn);
+    console.log('AppComponent - userAdmin:', this.userAdmin);
+
     if (this.isLoggedIn) {
       const userProfile = await this.keycloakService.loadUserProfile();
       this.username = userProfile.username;
+      console.log('AppComponent - username:', this.username);
     }
   }
 

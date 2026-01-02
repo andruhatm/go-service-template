@@ -30,6 +30,11 @@ func (s *PostgreSQLService) Close() error {
 	return nil
 }
 
+// GetDB returns the underlying sql.DB connection for advanced operations like migrations
+func (s *PostgreSQLService) GetDB() *sql.DB {
+	return s.db
+}
+
 // Execute выполняет команду (INSERT, UPDATE, DELETE) и возвращает результат
 func (s *PostgreSQLService) Execute(ctx context.Context, query string, args ...interface{}) (db.Result, error) {
 	res, err := s.db.ExecContext(ctx, query, args...)

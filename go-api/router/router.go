@@ -1,9 +1,11 @@
 package router
 
 import (
+	"database/sql"
 	"live/configuration"
 	adminhandlers "live/handlers"
 	"live/middleware"
+	"live/repository"
 	"net/http"
 
 	"github.com/gookit/slog"
@@ -11,7 +13,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-func GenerateServeMux(authMiddleware middleware.AuthMiddleware, cfg configuration.Configuration) http.Handler {
+func GenerateServeMux(authMiddleware middleware.AuthMiddleware, cfg configuration.Configuration, db *sql.DB) http.Handler {
 
 	sm := mux.NewRouter()
 	probesRouter := sm.Methods("GET").Subrouter()
@@ -32,6 +34,15 @@ func GenerateServeMux(authMiddleware middleware.AuthMiddleware, cfg configuratio
 	sm.HandleFunc("/public", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Public endpoint"))
 	}).Methods("GET")
+
+	// Initialize monitoring objects handler (needed for both public and protected routes)
+	monObjectRepo := repository.NewMonObjectRepository(db)
+	monObjectHandler := adminhandlers.NewMonObjectHandler(monObjectRepo)
+
+	// Public read-only monitoring objects endpoints (for development/testing)
+	// TODO: Remove or restrict in production
+	sm.HandleFunc("/api/mon-objects", monObjectHandler.ListMonObjects).Methods("GET")
+	sm.HandleFunc("/api/mon-objects/{id}", monObjectHandler.GetMonObject).Methods("GET")
 
 	// Protected routes
 	protected := sm.PathPrefix("/api").Subrouter()
@@ -81,6 +92,31 @@ func GenerateServeMux(authMiddleware middleware.AuthMiddleware, cfg configuratio
 		userID := middleware.GetUserID(r.Context())
 		w.Write([]byte("User ID: " + userID))
 	}).Methods("GET")
+
+	// Monitoring Objects CRUD endpoints (protected - Create, Update, Delete - ROLE_ADMIN only)
+	protected.HandleFunc("/mon-objects", func(w http.ResponseWriter, r *http.Request) {
+		if !middleware.HasRole(r.Context(), "realm:ROLE_ADMIN") {
+			http.Error(w, "Forbidden: ROLE_ADMIN required", http.StatusForbidden)
+			return
+		}
+		monObjectHandler.CreateMonObject(w, r)
+	}).Methods("POST")
+
+	protected.HandleFunc("/mon-objects/{id}", func(w http.ResponseWriter, r *http.Request) {
+		if !middleware.HasRole(r.Context(), "realm:ROLE_ADMIN") {
+			http.Error(w, "Forbidden: ROLE_ADMIN required", http.StatusForbidden)
+			return
+		}
+		monObjectHandler.UpdateMonObject(w, r)
+	}).Methods("PUT")
+
+	protected.HandleFunc("/mon-objects/{id}", func(w http.ResponseWriter, r *http.Request) {
+		if !middleware.HasRole(r.Context(), "realm:ROLE_ADMIN") {
+			http.Error(w, "Forbidden: ROLE_ADMIN required", http.StatusForbidden)
+			return
+		}
+		monObjectHandler.DeleteMonObject(w, r)
+	}).Methods("DELETE")
 
 	// Business routes
 	sm.HandleFunc("/buisiness/saveObj", func(w http.ResponseWriter, r *http.Request) {

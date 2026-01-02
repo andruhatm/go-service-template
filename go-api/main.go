@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"live/configuration"
+	"live/db"
 	"live/db/pg"
 	"live/db/victoria"
 	"live/middleware"
@@ -11,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"time"
 
 	"github.com/gookit/slog"
@@ -49,6 +51,15 @@ func main() {
 	defer pgService.Close()
 	slog.Info("Connected to PostgreSQL successfully")
 
+	// Run database migrations
+	migrationsDir := filepath.Join(".", "db", "migrations")
+	migrationService := db.NewMigrationService(pgService.GetDB(), migrationsDir)
+	slog.Infof("Running database migrations from: %s", migrationsDir)
+	if err := migrationService.RunMigrations(); err != nil {
+		slog.Fatalf("Failed to run migrations: %v", err)
+	}
+	slog.Info("Database migrations completed successfully")
+
 	//2 VictoriaMetrics
 	vmService, err := victoria.NewVictoriaMetricsService(cfg.VictoriaCfg.URL, 10*time.Second)
 	if err != nil {
@@ -64,7 +75,7 @@ func main() {
 	}
 
 	// init router
-	router := r.GenerateServeMux(*authMiddleware, cfg)
+	router := r.GenerateServeMux(*authMiddleware, cfg, pgService.GetDB())
 
 	// run server
 	s := &http.Server{

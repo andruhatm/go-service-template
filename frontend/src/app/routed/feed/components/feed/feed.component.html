@@ -1,67 +1,171 @@
 <div class="container">
+  <!-- Navigation and Filters -->
   <div class="nav">
     <div class="nav__categories js-dropdown">
       <div class="nav__select">
-        <div class="btn-select" data-dropdown-btn="categories">Тип обьекта</div>
+        <div class="btn-select" data-dropdown-btn="categories">Тип объекта</div>
         <nav class="dropdown dropdown--design-01" data-dropdown-list="categories">
           <ul class="dropdown__catalog row">
             <ul *ngFor="let category of categories" class="dropdown__catalog row">
-              <li class="col-xs-6"><a (click)="handleCategoryClick(category)" class="category"><i
-                [class]="category.color"></i>{{ category.nameCategory }}</a>
+              <li class="col-xs-6">
+                <a (click)="handleCategoryClick(category)" class="category">
+                  {{ category.nameCategory }}
+                </a>
               </li>
             </ul>
           </ul>
         </nav>
       </div>
     </div>
+
+    <!-- Search -->
+    <div class="search-box" style="margin-left: 20px;">
+      <input 
+        type="text" 
+        placeholder="Поиск по имени..." 
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="onSearch(searchTerm)"
+        style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
+      >
+      <button 
+        (click)="onSearch(searchTerm)" 
+        style="margin-left: 5px; padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;"
+      >
+        Поиск
+      </button>
+    </div>
+
+    <!-- Create Button (Admin Only) -->
+    <div *ngIf="isAdmin" style="margin-left: auto;">
+      <button 
+        (click)="openCreateDialog()" 
+        style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;"
+      >
+        + Создать объект
+      </button>
+    </div>
   </div>
 
+  <!-- Title and Info -->
   <div class="posts">
-
-    <div *ngIf="title">
-      <div style="font-size: 22px; background-color: rgba(249, 188, 100, 0.7)" class="posts__head">
-        <div class="title">
-          {{ title }}
-        </div>
+    <div *ngIf="title" style="font-size: 22px; background-color: rgba(249, 188, 100, 0.7)" class="posts__head">
+      <div class="title">
+        {{ title }}
+        <span style="font-size: 14px; margin-left: 10px;">
+          (Всего: {{ totalItems }}, Страница {{ page }} из {{ totalPages }})
+        </span>
       </div>
     </div>
 
+    <!-- Loading Indicator -->
+    <div *ngIf="loading" style="text-align: center; padding: 40px;">
+      <div class="spinner">Загрузка...</div>
+    </div>
 
-    <div class="posts__body" >
+    <!-- Empty State -->
+    <div *ngIf="isEmptyResponse && !loading" style="text-align: center; padding: 40px; color: #666;">
+      <p>Нет данных для отображения</p>
+      <button *ngIf="isAdmin" (click)="openCreateDialog()" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        Создать первый объект
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="posts__body" *ngIf="!loading && !isEmptyResponse">
       <div class="table__view">
-        <table *ngIf="!cells" mat-table [dataSource]="this.dataSource" class="mat-elevation-z8" style="background-color: white">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="background-color: white; width: 100%;">
+          
+          <!-- Dynamic Columns -->
           <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
-
-            <th mat-header-cell *matHeaderCellDef>
-              {{column.header}}
+            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5;">
+              {{ column.header }}
             </th>
             <td mat-cell *matCellDef="let row">
-              {{column.cell(row)}}
+              {{ getCellValue(column, row) }}
             </td>
+          </ng-container>
 
+          <!-- Actions Column (Admin Only) -->
+          <ng-container matColumnDef="actions" *ngIf="isAdmin">
+            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5; text-align: center;">
+              Действия
+            </th>
+            <td mat-cell *matCellDef="let row" style="text-align: center;">
+              <button 
+                mat-icon-button 
+                (click)="openViewDialog(row)" 
+                title="Просмотр"
+                style="color: #007bff; margin-right: 5px;"
+              >
+                <i class="material-icons">visibility</i>
+              </button>
+              <button 
+                mat-icon-button 
+                (click)="openEditDialog(row)" 
+                title="Редактировать"
+                style="color: #ffc107; margin-right: 5px;"
+              >
+                <i class="material-icons">edit</i>
+              </button>
+              <button 
+                mat-icon-button 
+                (click)="deleteMonObject(row)" 
+                title="Удалить"
+                style="color: #dc3545;"
+              >
+                <i class="material-icons">delete</i>
+              </button>
+            </td>
+          </ng-container>
+
+          <!-- View Action Column (Monitor Only) -->
+          <ng-container matColumnDef="actions" *ngIf="isMonitor && !isAdmin">
+            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5; text-align: center;">
+              Действия
+            </th>
+            <td mat-cell *matCellDef="let row" style="text-align: center;">
+              <button 
+                mat-icon-button 
+                (click)="openViewDialog(row)" 
+                title="Просмотр"
+                style="color: #007bff;"
+              >
+                <i class="material-icons">visibility</i>
+              </button>
+            </td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-
-        <table *ngIf="cells" mat-table [dataSource]="this.dataSource2" class="mat-elevation-z8" style="background-color: white">
-          <ng-container *ngFor="let column of columns2" [matColumnDef]="column.columnDef">
-            <th mat-header-cell *matHeaderCellDef>
-              {{column.header}}
-            </th>
-            <td mat-cell *matCellDef="let row">
-              {{column.cell(row)}}
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns2;"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" style="cursor: pointer;"></tr>
         </table>
       </div>
 
-
+      <!-- Pagination -->
+      <div class="pagination" style="display: flex; justify-content: center; align-items: center; margin-top: 20px; gap: 10px;">
+        <button 
+          (click)="previousPage()" 
+          [disabled]="page === 1"
+          style="padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;"
+          [style.opacity]="page === 1 ? '0.5' : '1'"
+          [style.cursor]="page === 1 ? 'not-allowed' : 'pointer'"
+        >
+          ← Предыдущая
+        </button>
+        
+        <span style="padding: 8px 15px; background: #f5f5f5; border-radius: 4px;">
+          Страница {{ page }} из {{ totalPages }}
+        </span>
+        
+        <button 
+          (click)="nextPage()" 
+          [disabled]="page === totalPages"
+          style="padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;"
+          [style.opacity]="page === totalPages ? '0.5' : '1'"
+          [style.cursor]="page === totalPages ? 'not-allowed' : 'pointer'"
+        >
+          Следующая →
+        </button>
+      </div>
     </div>
   </div>
-
 </div>

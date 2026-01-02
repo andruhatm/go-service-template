@@ -1,0 +1,99 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>{{ title }}</h2>
+
+  <mat-dialog-content>
+    <div class="mode-toggle" *ngIf="mode !== 'view'">
+      <button mat-button (click)="toggleJsonMode()">
+        {{ jsonMode ? 'Режим формы' : 'Режим JSON' }}
+      </button>
+    </div>
+
+    <!-- Form Mode -->
+    <form [formGroup]="form" *ngIf="!jsonMode">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Имя *</mat-label>
+        <input matInput formControlName="name" required>
+        <mat-error *ngIf="form.get('name')?.hasError('required')">
+          Имя обязательно
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Тип</mat-label>
+        <mat-select formControlName="type">
+          <mat-option value="">-- Не выбрано --</mat-option>
+          <mat-option value="eNodeB">eNodeB</mat-option>
+          <mat-option value="gNodeB">gNodeB</mat-option>
+          <mat-option value="router">Router</mat-option>
+          <mat-option value="switch">Switch</mat-option>
+          <mat-option value="server">Server</mat-option>
+          <mat-option value="cell">Cell</mat-option>
+          <mat-option value="rru">RRU</mat-option>
+          <mat-option value="cu">CU</mat-option>
+          <mat-option value="du">DU</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Технология</mat-label>
+        <input matInput formControlName="technology" placeholder="LTE, 5G, Cisco IOS, etc.">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Платформа</mat-label>
+        <input matInput formControlName="platform" placeholder="Virtual, Physical, etc.">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Сеть</mat-label>
+        <input matInput formControlName="network" placeholder="Core Network, Access Network, etc.">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Производитель</mat-label>
+        <input matInput formControlName="manufacturer" placeholder="Nokia, Cisco, Huawei, etc.">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Parent ID (UUID)</mat-label>
+        <input matInput formControlName="parentId" placeholder="Необязательно">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Child ID (UUID)</mat-label>
+        <input matInput formControlName="childId" placeholder="Необязательно">
+      </mat-form-field>
+    </form>
+
+    <!-- JSON Mode -->
+    <div *ngIf="jsonMode" class="json-editor">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>JSON</mat-label>
+        <textarea
+          matInput
+          [(ngModel)]="jsonText"
+          rows="15"
+          placeholder='{"name": "example", "type": "router", ...}'
+          [disabled]="mode === 'view'"
+        ></textarea>
+      </mat-form-field>
+      <div class="json-hint">
+        <small>Введите JSON объект с полями: name (обязательно), type, technology, platform, network, manufacturer, parentId, childId</small>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Отмена</button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onSave()"
+      *ngIf="mode !== 'view'"
+      [disabled]="!jsonMode && form.invalid"
+    >
+      {{ saveButtonText }}
+    </button>
+  </mat-dialog-actions>
+</div>
+
