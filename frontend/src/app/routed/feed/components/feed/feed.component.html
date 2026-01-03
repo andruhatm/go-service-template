@@ -95,25 +95,27 @@
                 mat-icon-button 
                 (click)="openViewDialog(row)" 
                 title="Просмотр"
-                style="color: #007bff; margin-right: 5px;"
+                color="primary"
+                style="margin-right: 5px;"
               >
-                <i class="material-icons">visibility</i>
+                <mat-icon>info</mat-icon>
               </button>
               <button 
                 mat-icon-button 
                 (click)="openEditDialog(row)" 
                 title="Редактировать"
-                style="color: #ffc107; margin-right: 5px;"
+                color="accent"
+                style="margin-right: 5px;"
               >
-                <i class="material-icons">edit</i>
+                <mat-icon>create</mat-icon>
               </button>
               <button 
                 mat-icon-button 
                 (click)="deleteMonObject(row)" 
                 title="Удалить"
-                style="color: #dc3545;"
+                color="warn"
               >
-                <i class="material-icons">delete</i>
+                <mat-icon>delete_outline</mat-icon>
               </button>
             </td>
           </ng-container>
@@ -128,9 +130,9 @@
                 mat-icon-button 
                 (click)="openViewDialog(row)" 
                 title="Просмотр"
-                style="color: #007bff;"
+                color="primary"
               >
-                <i class="material-icons">visibility</i>
+                <mat-icon>info</mat-icon>
               </button>
             </td>
           </ng-container>

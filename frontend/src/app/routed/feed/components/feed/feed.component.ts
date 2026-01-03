@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { KeycloakService } from 'keycloak-angular';
 import { MonObjectService } from '../../../../features/mon-objects/services/mon-object.service';
 import { MonObject } from '../../../../features/mon-objects/models/mon-object.model';
 import { MonObjectDialogComponent } from '../mon-object-dialog/mon-object-dialog.component';
+import { KeycloakAuthService } from '../../../../core/auth/keycloak-auth.service';
+import { Subscription } from 'rxjs';
 
 export interface CategoryFilter {
   nameCategory: string;
@@ -15,7 +17,10 @@ export interface CategoryFilter {
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.sass']
 })
-export class FeedComponent implements OnInit {
+export class FeedComponent implements OnInit, OnDestroy {
+  // Subscriptions
+  private authSubscription?: Subscription;
+  
   // Table columns configuration
   columns = [
     {
@@ -78,10 +83,11 @@ export class FeedComponent implements OnInit {
   constructor(
     private readonly monObjectService: MonObjectService,
     private readonly keycloakService: KeycloakService,
+    private readonly keycloakAuthService: KeycloakAuthService,
     public dialog: MatDialog
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
     // Initialize categories for filtering
     this.categories = [
       { nameCategory: 'Все объекты', type: '' },
@@ -96,57 +102,33 @@ export class FeedComponent implements OnInit {
       { nameCategory: 'DU', type: 'du' },
     ];
 
-    try {
-      // Check authentication - same pattern as app.component.ts
-      this.isLoggedIn = await this.keycloakService.isLoggedIn();
+    // Subscribe to authentication state changes
+    // This ensures we update when auth state becomes available (handles first login timing)
+    this.authSubscription = this.keycloakAuthService.authState$.subscribe(authState => {
+      const wasAdmin = this.isAdmin;
       
-      console.log('Feed Component - isLoggedIn:', this.isLoggedIn);
+      this.isLoggedIn = authState.isAuthenticated;
+      this.isAdmin = authState.isAdmin;
+      this.isMonitor = authState.isMonitor;
+
+      console.log('Feed Component - Auth state updated:');
+      console.log('  isLoggedIn:', this.isLoggedIn);
+      console.log('  isAdmin:', this.isAdmin);
+      console.log('  isMonitor:', this.isMonitor);
+      console.log('  Username:', authState.username);
+      console.log('  Roles:', authState.roles);
       
-      if (this.isLoggedIn) {
-        // Wrap role checks in try-catch
-        try {
-          this.isAdmin = this.keycloakService.isUserInRole('ROLE_ADMIN');
-          this.isMonitor = this.keycloakService.isUserInRole('ROLE_MONITOR');
-        } catch (roleError) {
-          console.warn('Feed Component - Error checking roles:', roleError);
-          // Fallback: check roles from token directly
-          try {
-            const roles = this.keycloakService.getUserRoles();
-            this.isAdmin = roles.includes('ROLE_ADMIN');
-            this.isMonitor = roles.includes('ROLE_MONITOR');
-          } catch (e) {
-            console.error('Feed Component - Cannot get roles:', e);
-            this.isAdmin = false;
-            this.isMonitor = false;
-          }
-        }
-        
-        console.log('Feed Component - isAdmin:', this.isAdmin);
-        console.log('Feed Component - isMonitor:', this.isMonitor);
-        
-        const userProfile = await this.keycloakService.loadUserProfile();
-        console.log('Feed Component - Username:', userProfile.username);
-        
-        try {
-          console.log('Feed Component - All roles:', this.keycloakService.getUserRoles());
-        } catch (e) {
-          console.log('Feed Component - Could not get roles list');
-        }
-      } else {
-        this.isAdmin = false;
-        this.isMonitor = false;
+      // Update displayed columns when admin status changes
+      if (wasAdmin !== this.isAdmin) {
+        console.log('Feed Component - Admin status changed, updating columns');
+        this.updateDisplayedColumns();
       }
-    } catch (error) {
-      console.error('Feed Component - Error in ngOnInit:', error);
-      this.isLoggedIn = false;
-      this.isAdmin = false;
-      this.isMonitor = false;
-    }
+    });
     
-    // Set displayed columns based on role
+    // Set initial displayed columns
     this.updateDisplayedColumns();
     
-    // Load data
+    // Initial load of data
     this.loadMonObjects();
   }
 
@@ -327,8 +309,13 @@ export class FeedComponent implements OnInit {
 
   // Login method
   login(): void {
-    this.keycloakService.login({
-      redirectUri: window.location.href
-    });
+    this.keycloakAuthService.login();
+  }
+
+  ngOnDestroy(): void {
+    // Clean up subscription
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
   }
 }
