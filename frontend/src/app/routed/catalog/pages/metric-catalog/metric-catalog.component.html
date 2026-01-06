@@ -1,53 +1,107 @@
 <div class="container feed">
 
-
-
-    <div class="nav__categories js-dropdown">
-      <div class="nav__select">
-<!--        <div class="btn-select" data-dropdown-btn="categories">Спецификация</div>-->
-        <h3>Метрики</h3>
-<!--        <nav class="dropdown dropdown&#45;&#45;design-01" data-dropdown-list="categories">-->
-<!--          <ul class="dropdown__catalog row">-->
-<!--            <ul *ngFor="let category of categories" class="dropdown__catalog row">-->
-<!--              <li class="col-xs-6"><a (click)="handleCategoryClick(category)" class="category"><i-->
-<!--                [class]="category.color"></i>{{ category.nameCategory }}</a>-->
-<!--              </li>-->
-<!--            </ul>-->
-<!--          </ul>-->
-<!--        </nav>-->
-<!--      </div>-->
-      <button mat-flat-button color="primary" (click)="openDialog()">Создать метрику</button>
+  <div class="nav__categories js-dropdown">
+    <div class="nav__select">
+      <h3>Метрики (Всего: {{ totalMetrics }})</h3>
     </div>
+    <button *ngIf="isAdmin" mat-flat-button color="primary" (click)="openCreateDialog()">
+      <mat-icon>add</mat-icon>
+      Создать метрику
+    </button>
   </div>
 
+  <!-- Group filter chips -->
+  <div style="margin: 20px 0; display: flex; flex-wrap: wrap; gap: 12px;">
+    <button mat-raised-button 
+            [class.active-chip]="!selectedGroup"
+            [color]="!selectedGroup ? 'primary' : ''" 
+            (click)="filterByGroup(undefined)" 
+            class="filter-chip">
+      Все группы
+    </button>
+    <button *ngFor="let group of groups" 
+            mat-raised-button 
+            [class.active-chip]="selectedGroup === group"
+            [color]="selectedGroup === group ? 'primary' : ''" 
+            (click)="filterByGroup(group)" 
+            class="filter-chip">
+      {{ group }}
+    </button>
+  </div>
 
   <div class="posts">
     <div class="posts__body">
-      <table *ngIf="metric" mat-table [dataSource]="this.dataSource" class="mat-elevation-z8 demo-table">
-        <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
-          <th mat-header-cell *matHeaderCellDef>
-            {{column.header}}
-          </th>
-          <td mat-cell *matCellDef="let row">
-            {{column.cell(row)}}
-          </td>
-        </ng-container>
+      <!-- Loading spinner -->
+      <div *ngIf="loading" style="text-align: center; padding: 40px;">
+        <mat-spinner></mat-spinner>
+      </div>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-      <table *ngIf="!metric" mat-table [dataSource]="this.dataSource2" class="mat-elevation-z8 demo-table">
-        <ng-container *ngFor="let column of columns2" [matColumnDef]="column.columnDef">
-          <th mat-header-cell *matHeaderCellDef>
-            {{column.header}}
-          </th>
-          <td mat-cell *matCellDef="let row">
-            {{column.cell(row)}}
-          </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns2;"></tr>
-      </table>
+      <!-- Empty state -->
+      <div *ngIf="!loading && dataSource.length === 0" style="text-align: center; padding: 40px; color: #666;">
+        <p>Нет данных для отображения</p>
+        <button *ngIf="isAdmin" (click)="openCreateDialog()" mat-raised-button color="primary" style="margin-top: 10px;">
+          Создать первую метрику
+        </button>
+      </div>
+
+      <!-- Metrics table -->
+      <div class="table__view" *ngIf="metric && !loading && dataSource.length > 0">
+        <table mat-table [dataSource]="this.dataSource" class="mat-elevation-z8" style="background-color: white; width: 100%;">
+          <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
+            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5;">
+              {{column.header}}
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <ng-container *ngIf="column.columnDef !== 'actions'">
+                {{column.cell(row)}}
+              </ng-container>
+              <ng-container *ngIf="column.columnDef === 'actions' && isAdmin">
+                <button mat-icon-button color="primary" 
+                        (click)="openEditDialog(row)" 
+                        matTooltip="Редактировать"
+                        style="margin-right: 5px;">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" 
+                        (click)="openDeleteDialog(row)" 
+                        matTooltip="Удалить">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </ng-container>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" style="cursor: pointer;"></tr>
+        </table>
+
+        <!-- Pagination -->
+        <mat-paginator *ngIf="dataSource.length > 0"
+                       [length]="totalMetrics"
+                       [pageSize]="pageSize"
+                       [pageSizeOptions]="pageSizeOptions"
+                       [pageIndex]="currentPage - 1"
+                       (page)="onPageChange($event)"
+                       showFirstLastButtons
+                       style="background-color: white;">
+        </mat-paginator>
+      </div>
+
+      <!-- KPI table (kept for future use) -->
+      <div class="table__view" *ngIf="!metric && !loading && dataSource2.length > 0">
+        <table mat-table [dataSource]="this.dataSource2" class="mat-elevation-z8" style="background-color: white; width: 100%;">
+          <ng-container *ngFor="let column of columns2" [matColumnDef]="column.columnDef">
+            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5;">
+              {{column.header}}
+            </th>
+            <td mat-cell *matCellDef="let row">
+              {{column.cell(row)}}
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns2;" style="cursor: pointer;"></tr>
+        </table>
+      </div>
     </div>
   </div>
 </div>

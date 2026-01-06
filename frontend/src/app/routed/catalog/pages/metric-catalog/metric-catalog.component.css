@@ -90,3 +90,29 @@ textarea.mat-input-element{
 .timer{
   color: gray;
 }
+
+/* Filter chips styling */
+.filter-chip {
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-chip:not(.active-chip) {
+  background-color: #f5f5f5;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.filter-chip:not(.active-chip):hover {
+  background-color: #e0e0e0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.filter-chip.active-chip {
+  box-shadow: 0 4px 8px rgba(63, 81, 181, 0.3);
+  font-weight: 600;
+}

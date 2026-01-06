@@ -34,6 +34,10 @@ export const routes: Routes = [
     loadChildren: () => import('./routed/admin-panel/admin-panel.module').then((m) => m.AdminPanelModule)
   },
   {
+    path: 'dashboard',
+    loadChildren: () => import('./routed/dashboard/dashboard.module').then((m) => m.DashboardModule)
+  },
+  {
     path: 'about',
     component: HomePage
   },

@@ -1,0 +1,55 @@
+<div class="widget-container">
+  <div class="widget-header">
+    <div class="widget-title-section">
+      <h3>{{ widget.title }}</h3>
+      <div class="widget-info">
+        <span class="badge">{{ widget.objectName }}</span>
+        <span class="badge metric">{{ widget.metricName }}</span>
+      </div>
+    </div>
+    <div class="widget-actions">
+      <button mat-icon-button (click)="refresh()" class="action-btn" [disabled]="loading" matTooltip="Обновить">
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button mat-icon-button (click)="remove()" class="action-btn" matTooltip="Удалить виджет">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="widget-content">
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Загрузка данных...</p>
+    </div>
+
+    <div *ngIf="error && !loading" class="error-container">
+      <mat-icon color="warn">error</mat-icon>
+      <p>{{ error }}</p>
+    </div>
+
+    <div *ngIf="!loading && !error && chartData.length > 0" class="chart-container">
+      <ngx-charts-line-chart
+        [view]="view"
+        [scheme]="colorScheme"
+        [results]="chartData"
+        [gradient]="gradient"
+        [xAxis]="showXAxis"
+        [yAxis]="showYAxis"
+        [legend]="showLegend"
+        [showXAxisLabel]="showXAxisLabel"
+        [showYAxisLabel]="showYAxisLabel"
+        [xAxisLabel]="xAxisLabel"
+        [yAxisLabel]="yAxisLabel"
+        [timeline]="timeline"
+        [autoScale]="true">
+      </ngx-charts-line-chart>
+    </div>
+
+    <div *ngIf="!loading && !error && chartData.length === 0" class="no-data-container">
+      <mat-icon>info</mat-icon>
+      <p>Нет данных для отображения</p>
+    </div>
+  </div>
+</div>
+

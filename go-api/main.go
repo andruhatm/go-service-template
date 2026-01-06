@@ -75,7 +75,7 @@ func main() {
 	}
 
 	// init router
-	router := r.GenerateServeMux(*authMiddleware, cfg, pgService.GetDB())
+	router := r.GenerateServeMux(*authMiddleware, cfg, pgService.GetDB(), vmService)
 
 	// run server
 	s := &http.Server{

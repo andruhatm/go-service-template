@@ -1,0 +1,89 @@
+<div class="dashboard-container">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="page-header">
+          <h1 class="page-title">Дашборд</h1>
+          
+          <!-- Controls Section -->
+          <div class="dashboard-controls" *ngIf="!loading && !error && dashboard">
+            <div class="control-group">
+              <label>Период:</label>
+              <select class="form-control" [(ngModel)]="period" (change)="onPeriodChange()">
+                <option *ngFor="let opt of periodOptions" [value]="opt.value">
+                  {{ opt.label }}
+                </option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label>
+                <input type="checkbox" [(ngModel)]="autoRefresh" (change)="onAutoRefreshChange()">
+                Автообновление
+              </label>
+            </div>
+
+            <div class="control-group" *ngIf="autoRefresh">
+              <label>Интервал:</label>
+              <select class="form-control" [(ngModel)]="refreshInterval" (change)="onRefreshIntervalChange()">
+                <option *ngFor="let opt of refreshIntervalOptions" [value]="opt.value">
+                  {{ opt.label }}
+                </option>
+              </select>
+            </div>
+
+            <button class="btn btn-secondary" (click)="refreshAll()">
+              <mat-icon>refresh</mat-icon> Обновить все
+            </button>
+
+            <button class="btn btn-primary" (click)="openAddWidgetDialog()">
+              <mat-icon>add</mat-icon> Добавить виджет
+            </button>
+          </div>
+        </div>
+        
+        <!-- Loading State -->
+        <div *ngIf="loading" class="loading-container">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Загрузка...</span>
+          </div>
+          <p>Загрузка дашборда...</p>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="error && !loading" class="alert alert-danger" role="alert">
+          <strong>Ошибка:</strong> {{ error }}
+        </div>
+
+        <!-- Dashboard Content -->
+        <div *ngIf="!loading && !error && dashboard" class="dashboard-content">
+          
+          <!-- Widgets Grid -->
+          <div class="widgets-grid" *ngIf="dashboardData.widgets && dashboardData.widgets.length > 0">
+            <div class="widget-wrapper" *ngFor="let widget of dashboardData.widgets">
+              <app-chart-widget 
+                [widget]="widget" 
+                [period]="period"
+                [autoRefresh]="autoRefresh"
+                [refreshInterval]="refreshInterval"
+                (removeWidget)="onRemoveWidget($event)">
+              </app-chart-widget>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-workspace" *ngIf="!dashboardData.widgets || dashboardData.widgets.length === 0">
+            <div class="empty-state">
+              <mat-icon class="empty-icon">show_chart</mat-icon>
+              <h3>Нет виджетов</h3>
+              <p class="text-muted">Нажмите "Добавить виджет", чтобы создать первый график</p>
+              <button class="btn btn-primary btn-lg" (click)="openAddWidgetDialog()">
+                <mat-icon>add</mat-icon> Добавить виджет
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

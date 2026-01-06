@@ -3,6 +3,7 @@ package router
 import (
 	"database/sql"
 	"live/configuration"
+	"live/db/victoria"
 	adminhandlers "live/handlers"
 	"live/middleware"
 	"live/repository"
@@ -13,7 +14,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-func GenerateServeMux(authMiddleware middleware.AuthMiddleware, cfg configuration.Configuration, db *sql.DB) http.Handler {
+func GenerateServeMux(authMiddleware middleware.AuthMiddleware, cfg configuration.Configuration, db *sql.DB, vmService *victoria.VictoriaMetricsService) http.Handler {
 
 	sm := mux.NewRouter()
 	probesRouter := sm.Methods("GET").Subrouter()
@@ -39,10 +40,34 @@ func GenerateServeMux(authMiddleware middleware.AuthMiddleware, cfg configuratio
 	monObjectRepo := repository.NewMonObjectRepository(db)
 	monObjectHandler := adminhandlers.NewMonObjectHandler(monObjectRepo)
 
+	// Initialize metrics catalog handler
+	metricCatalogRepo := repository.NewMetricCatalogRepository(db)
+	metricCatalogHandler := adminhandlers.NewMetricCatalogHandler(metricCatalogRepo)
+
+	// Initialize dashboard handler
+	dashboardRepo := repository.NewDashboardRepository(db)
+	dashboardHandler := adminhandlers.NewDashboardHandler(dashboardRepo)
+
+	// Initialize metrics query handler
+	metricsQueryHandler := adminhandlers.NewMetricsQueryHandler(vmService)
+
 	// Public read-only monitoring objects endpoints (for development/testing)
 	// TODO: Remove or restrict in production
 	sm.HandleFunc("/api/mon-objects", monObjectHandler.ListMonObjects).Methods("GET")
 	sm.HandleFunc("/api/mon-objects/{id}", monObjectHandler.GetMonObject).Methods("GET")
+
+	// Public read-only metrics catalog endpoints
+	sm.HandleFunc("/api/metrics-catalog", metricCatalogHandler.ListMetrics).Methods("GET")
+	sm.HandleFunc("/api/metrics-catalog/groups", metricCatalogHandler.GetGroups).Methods("GET")
+	sm.HandleFunc("/api/metrics-catalog/{id}", metricCatalogHandler.GetMetric).Methods("GET")
+
+	// Public read-only dashboards endpoints
+	sm.HandleFunc("/api/dashboards", dashboardHandler.ListDashboards).Methods("GET")
+	sm.HandleFunc("/api/dashboards/{id}", dashboardHandler.GetDashboard).Methods("GET")
+
+	// Public metrics query endpoints
+	sm.HandleFunc("/api/metrics/query", metricsQueryHandler.QueryMetrics).Methods("POST")
+	sm.HandleFunc("/api/metrics/query-instant", metricsQueryHandler.QueryMetricsInstant).Methods("GET")
 
 	// Protected routes
 	protected := sm.PathPrefix("/api").Subrouter()
@@ -116,6 +141,52 @@ func GenerateServeMux(authMiddleware middleware.AuthMiddleware, cfg configuratio
 			return
 		}
 		monObjectHandler.DeleteMonObject(w, r)
+	}).Methods("DELETE")
+
+	// Metrics Catalog CRUD endpoints (protected - Create, Update, Delete - ROLE_ADMIN only)
+	protected.HandleFunc("/metrics-catalog", func(w http.ResponseWriter, r *http.Request) {
+		if !middleware.HasRole(r.Context(), "realm:ROLE_ADMIN") {
+			http.Error(w, "Forbidden: ROLE_ADMIN required", http.StatusForbidden)
+			return
+		}
+		metricCatalogHandler.CreateMetric(w, r)
+	}).Methods("POST")
+
+	protected.HandleFunc("/metrics-catalog/{id}", func(w http.ResponseWriter, r *http.Request) {
+		if !middleware.HasRole(r.Context(), "realm:ROLE_ADMIN") {
+			http.Error(w, "Forbidden: ROLE_ADMIN required", http.StatusForbidden)
+			return
+		}
+		metricCatalogHandler.UpdateMetric(w, r)
+	}).Methods("PUT")
+
+	protected.HandleFunc("/metrics-catalog/{id}", func(w http.ResponseWriter, r *http.Request) {
+		if !middleware.HasRole(r.Context(), "realm:ROLE_ADMIN") {
+			http.Error(w, "Forbidden: ROLE_ADMIN required", http.StatusForbidden)
+			return
+		}
+		metricCatalogHandler.DeleteMetric(w, r)
+	}).Methods("DELETE")
+
+	// Dashboards CRUD endpoints
+	// Create dashboard - Allow any authenticated user to create their own dashboard
+	protected.HandleFunc("/dashboards", func(w http.ResponseWriter, r *http.Request) {
+		// Users can create dashboards for themselves
+		// Admins can create dashboards for any user
+		dashboardHandler.CreateDashboard(w, r)
+	}).Methods("POST")
+
+	// Update dashboard - Allow users to update their own dashboards, admins can update any
+	protected.HandleFunc("/dashboards/{id}", func(w http.ResponseWriter, r *http.Request) {
+		dashboardHandler.UpdateDashboard(w, r)
+	}).Methods("PUT")
+
+	protected.HandleFunc("/dashboards/{id}", func(w http.ResponseWriter, r *http.Request) {
+		if !middleware.HasRole(r.Context(), "realm:ROLE_ADMIN") {
+			http.Error(w, "Forbidden: ROLE_ADMIN required", http.StatusForbidden)
+			return
+		}
+		dashboardHandler.DeleteDashboard(w, r)
 	}).Methods("DELETE")
 
 	// Business routes
