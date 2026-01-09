@@ -26,6 +26,7 @@ type (
 		PostgresCfg      []PgConnection      `yaml:"postgresCfg" json:"postgres_cfg"`
 		SqliteCfg        SqliteCfg           `yaml:"sqliteCfg" json:"sqlite_cfg"`
 		VictoriaCfg      VictoriaCfg         `yaml:"victoriaCfg" json:"victoria_cfg"`
+		ForecastCfg      ForecastCfg         `yaml:"forecastCfg" json:"forecast_cfg"`
 		KeycloakCfg      KeycloakConfig      `yaml:"keycloakCfg" json:"keycloak_cfg"`
 		KeycloakAdminCfg KeycloakAdminConfig `yaml:"keycloakAdminCfg" json:"keycloak_admin_cfg"`
 	}
@@ -41,6 +42,10 @@ type (
 
 	VictoriaCfg struct {
 		URL string `yaml:"url" env-default:"localhost"`
+	}
+
+	ForecastCfg struct {
+		URL string `yaml:"url" env-default:"http://localhost:8082"`
 	}
 
 	LoggingCfg struct {

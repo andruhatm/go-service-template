@@ -13,6 +13,8 @@ sqliteCfg:
   path: "./db"
 victoriaCfg:
   url: http://localhost:8428
+forecastCfg:
+  url: http://localhost:8082
 keycloakCfg:
   issuer: http://localhost:8080/realms/myrealm
   client_id: spa-client
@@ -20,4 +22,3 @@ keycloakCfg:
 keycloakAdminCfg:
   admin_client_id: admin-service
   admin_client_secret: wqswKbViD5FwRJTiOnhyQCTT3jjjbaNU
-#  admin_client_secret: jym5bshxscBAQJqBsfo45hphL0oRdhx3

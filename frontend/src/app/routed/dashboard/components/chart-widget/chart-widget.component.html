@@ -42,7 +42,12 @@
         [xAxisLabel]="xAxisLabel"
         [yAxisLabel]="yAxisLabel"
         [timeline]="timeline"
-        [autoScale]="true">
+        [autoScale]="yScaleMin === undefined && yScaleMax === undefined"
+        [yScaleMin]="yScaleMin"
+        [yScaleMax]="yScaleMax"
+        [referenceLines]="referenceLines"
+        [showRefLines]="showThresholds"
+        [showRefLabels]="showThresholds">
       </ngx-charts-line-chart>
     </div>
 

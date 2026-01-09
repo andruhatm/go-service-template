@@ -1,16 +1,11 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {DatePipe} from "@angular/common";
-import {CurrentUserImpl} from "../../../../core/auth/current-user.service";
 import {MatDialog} from "@angular/material/dialog";
-import {ExistingEvent} from "../../../../features/events/models/existing-event.model";
-import {DefaultOrganizer} from "../../../../features/users/models/default-organizer.model";
-import {HttpClient} from '@angular/common/http';
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
-import {Anomaly} from "../../../../features/other-model/anomalies.model";
 import {ForecastDialogComponent} from "../add-forecast-req/forecast-dialog.component";
-import {AnomalyService} from "../../../../features/form/services/anomaly.service";
+import {ForecastService, Forecast} from "../../../../services/forecast.service";
 
 @Component({
   selector: 'app-anomaly-list',
@@ -21,87 +16,59 @@ export class AnomalyListComponent implements OnInit {
 
   columns = [
     {
-      columnDef: 'name',
+      columnDef: 'metric_name',
       header: 'Метрика',
-      cell: (element: Anomaly) => `${element.name}`,
+      cell: (element: Forecast) => `${element.metric_name}`,
+    },
+    {
+      columnDef: 'mon_object_name',
+      header: 'Объект мониторинга',
+      cell: (element: Forecast) => `${element.mon_object_name}`,
     },
     {
       columnDef: 'status',
       header: 'Статус',
-      cell: (element: Anomaly) => `${element.status}`,
+      cell: (element: Forecast) => `${element.status}`,
     },
     {
-      columnDef: 'objName',
-      header: 'Имя обьекта',
-      cell: (element: Anomaly) => `${element.objectName}`,
+      columnDef: 'forecast_periods',
+      header: 'Периоды',
+      cell: (element: Forecast) => `${element.forecast_periods} (${element.freq})`,
     },
     {
-      columnDef: 'objType',
-      header: 'Тип обьекта',
-      cell: (element: Anomaly) => `${element.objectType}`,
-    },
-    {
-      columnDef: 'DateOfCreation',
+      columnDef: 'created_at',
       header: 'Дата создания',
-      cell: (element: Anomaly) => `${element.dateAdded}`,
+      cell: (element: Forecast) => this.formatDate(element.created_at),
     },
     {
-      columnDef: 'DateOfForecast',
-      header: 'Дата пересечения',
-      cell: (element: Anomaly) => `${element.calculatedDate}`,
+      columnDef: 'forecast_points',
+      header: 'Точек прогноза',
+      cell: (element: Forecast) => element.forecast_points ? `${element.forecast_points}` : '-',
+    },
+    {
+      columnDef: 'actions',
+      header: 'Действия',
+      cell: () => '',
     },
   ];
 
   constructor(
     public readonly datepipe: DatePipe,
     public dialog: MatDialog,
-    private http: HttpClient,
-    private readonly anomalyService: AnomalyService,
-  ) {
+    public readonly forecastService: ForecastService,
+  ) {}
 
-  }
-
-  dataSource = new MatTableDataSource<Anomaly>();
+  dataSource = new MatTableDataSource<Forecast>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
   displayedColumns = this.columns.map(c => c.columnDef);
-
-  events: ExistingEvent[];
-  user: CurrentUserImpl;
-  date: Date;
-  defaultOganizer: DefaultOrganizer;
-
-  currentTutorial = null;
-  currentIndex = -1;
-  pagesCount: number;
-  title = '';
-  modal = false;
-
-  dateSort = true;
-  rateSort;
-  membersSort;
-
-  dateIcon = 'expand_more';
-  membersIcon;
-  rateIcon;
-
-  userCity;
-
   loading = false;
-
-  page = 1;
-  count = 0;
-  pageSize = 15;
-  query = 'empty';
-
-
   isEmptyResponse = false;
 
   ngOnInit(): void {
-    this.anomalyService.anomalies$.subscribe(anomalies => this.dataSource.data = anomalies);
-    this.anomalyService.getAnomalies();
+    this.loadForecasts();
   }
 
   ngAfterViewInit() {
@@ -109,21 +76,67 @@ export class AnomalyListComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
-  openDialog() {
+  loadForecasts(): void {
+    this.loading = true;
+    this.forecastService.listForecasts(100, 0).subscribe({
+      next: (response) => {
+        this.dataSource.data = response.forecasts;
+        this.loading = false;
+        this.isEmptyResponse = response.forecasts.length === 0;
+      },
+      error: (err) => {
+        console.error('Failed to load forecasts:', err);
+        this.loading = false;
+      }
+    });
+  }
+
+  openDialog(): void {
     const dialogRef = this.dialog.open(ForecastDialogComponent, {
-      width: '550px',
-      // data: {name: this.name, animal: this.animal},
+      width: '750px',
+      maxWidth: '90vw',
+      panelClass: 'forecast-dialog-panel',
+      autoFocus: false,
+      restoreFocus: false
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
+      if (result) {
+        console.log('Forecast created:', result);
+        this.loadForecasts(); // Reload the list
+      }
     });
   }
-}
 
+  deleteForecast(forecast: Forecast): void {
+    if (confirm(`Удалить прогноз для ${forecast.metric_name}?`)) {
+      this.forecastService.deleteForecast(forecast.id).subscribe({
+        next: () => {
+          console.log('Forecast deleted');
+          this.loadForecasts();
+        },
+        error: (err) => {
+          console.error('Failed to delete forecast:', err);
+          alert('Ошибка при удалении прогноза');
+        }
+      });
+    }
+  }
 
-function randomDate(date: Date): string{
-  const datePipe = new DatePipe('en-US');
-  return datePipe.transform(date, 'yyyy-MM-dd HH:mm')
+  getStatusColor(status: string): string {
+    return this.forecastService.getStatusColor(status);
+  }
 
+  getStatusIcon(status: string): string {
+    return this.forecastService.getStatusIcon(status);
+  }
+
+  formatDate(dateStr: string): string {
+    const date = new Date(dateStr);
+    return this.datepipe.transform(date, 'dd.MM.yyyy HH:mm') || '';
+  }
+
+  refreshForecasts(): void {
+    this.loadForecasts();
+  }
 }

@@ -32,6 +32,13 @@
               </select>
             </div>
 
+            <div class="control-group">
+              <label>
+                <input type="checkbox" [(ngModel)]="showThresholds" (change)="onShowThresholdsChange()">
+                Показать пороги
+              </label>
+            </div>
+
             <button class="btn btn-secondary" (click)="refreshAll()">
               <mat-icon>refresh</mat-icon> Обновить все
             </button>
@@ -58,18 +65,19 @@
         <!-- Dashboard Content -->
         <div *ngIf="!loading && !error && dashboard" class="dashboard-content">
           
-          <!-- Widgets Grid -->
-          <div class="widgets-grid" *ngIf="dashboardData.widgets && dashboardData.widgets.length > 0">
-            <div class="widget-wrapper" *ngFor="let widget of dashboardData.widgets">
+          <!-- Widgets Grid with Gridster -->
+          <gridster [options]="gridsterOptions" *ngIf="dashboardData.widgets && dashboardData.widgets.length > 0">
+            <gridster-item [item]="widget" *ngFor="let widget of dashboardData.widgets">
               <app-chart-widget 
                 [widget]="widget" 
                 [period]="period"
                 [autoRefresh]="autoRefresh"
                 [refreshInterval]="refreshInterval"
+                [showThresholds]="showThresholds"
                 (removeWidget)="onRemoveWidget($event)">
               </app-chart-widget>
-            </div>
-          </div>
+            </gridster-item>
+          </gridster>
 
           <!-- Empty State -->
           <div class="empty-workspace" *ngIf="!dashboardData.widgets || dashboardData.widgets.length === 0">

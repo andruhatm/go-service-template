@@ -4,3 +4,16 @@
 .input-group-text{
   background-color: #f8f9fa;
 }
+
+/* Forecast Dialog Panel - global styles */
+.forecast-dialog-panel {
+  max-width: 90vw !important;
+}
+
+.forecast-dialog-panel .mat-dialog-container {
+  width: 750px !important;
+  max-width: 90vw !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box;
+}

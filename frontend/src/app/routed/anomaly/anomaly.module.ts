@@ -3,7 +3,7 @@ import {CommonModule} from "@angular/common";
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
 import {MatFormFieldModule} from "@angular/material/form-field";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatCardModule} from "@angular/material/card";
 import {MatButtonModule} from "@angular/material/button";
 import {MatDatepickerModule} from "@angular/material/datepicker";
@@ -16,16 +16,21 @@ import {AnomalyRoutingModule} from "./anomaly-routing.module";
 import {MatSortModule} from "@angular/material/sort";
 import {ForecastDialogComponent} from "./components/add-forecast-req/forecast-dialog.component";
 import {MatDialogModule} from "@angular/material/dialog";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatChipsModule} from "@angular/material/chips";
+import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatStepperModule} from "@angular/material/stepper";
 
 @NgModule({
   declarations: [AnomalypageComponent, AnomalyListComponent, ForecastDialogComponent],
   imports: [
     AnomalyRoutingModule,
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     MatInputModule,
     MatSelectModule,
     MatFormFieldModule,
-    ReactiveFormsModule,
     MatCardModule,
     MatButtonModule,
     MatDatepickerModule,
@@ -34,6 +39,10 @@ import {MatDialogModule} from "@angular/material/dialog";
     MatTableModule,
     MatSortModule,
     MatDialogModule,
+    MatProgressSpinnerModule,
+    MatChipsModule,
+    MatTooltipModule,
+    MatStepperModule,
   ],
   exports: [AnomalypageComponent,AnomalyListComponent,ForecastDialogComponent]
 })

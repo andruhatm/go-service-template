@@ -1,32 +1,228 @@
-<h2 mat-dialog-title>Создание заявки на прогноз</h2>
-<mat-dialog-content class="mat-typography">
-  <p>Заполните поля</p>
+<h2 mat-dialog-title>Создание прогноза</h2>
+<mat-dialog-content class="mat-typography forecast-dialog-content">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Загрузка данных...</p>
+  </div>
 
-  <form [formGroup]="form" (ngSubmit)="handleFormSubmit()">
-    <!--    <mat-error *ngIf="error"> При создании подписки произошла ошибка.</mat-error>-->
+  <mat-error *ngIf="error" class="error-message">
+    {{error}}
+  </mat-error>
 
-    <mat-card-content class="content">
-        <mat-form-field appearance="outline">
-          <mat-label>Имя</mat-label>
-          <input class="message-input" matInput formControlName="name" required />
-        </mat-form-field>
+  <mat-stepper linear #stepper *ngIf="!loading">
+    <!-- Step 1: Mon Object Selection -->
+    <mat-step [stepControl]="monObjectFormGroup" label="Объект мониторинга">
+      <form [formGroup]="monObjectFormGroup">
+        <div class="step-content">
+          <h3 class="step-title">Шаг 1: Выберите объект мониторинга</h3>
+          
+          <!-- Debug info -->
+          <div *ngIf="monObjects.length === 0" class="warning-panel">
+            <mat-icon>warning</mat-icon>
+            <span>Объекты мониторинга не загружены. Проверьте подключение к API.</span>
+          </div>
+          
+          <!-- Объект мониторинга с поиском -->
+          <div class="form-field-wrapper">
+            <div class="search-wrapper">
+              <mat-form-field appearance="outline" class="search-field">
+                <mat-label>Поиск объекта</mat-label>
+                <input matInput 
+                       [(ngModel)]="monObjectSearchTerm" 
+                       [ngModelOptions]="{standalone: true}"
+                       (input)="filterMonObjects()"
+                       (keyup)="filterMonObjects()"
+                       placeholder="Введите название или тип...">
+                <mat-icon matSuffix>search</mat-icon>
+              </mat-form-field>
+            </div>
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Объект мониторинга</mat-label>
+              <mat-select formControlName="mon_object_name" required>
+                <mat-option *ngFor="let obj of filteredMonObjects; trackBy: trackByName" [value]="obj.name">
+                  {{obj.name}} <span class="option-secondary">({{obj.type}})</span>
+                </mat-option>
+                <mat-option *ngIf="filteredMonObjects.length === 0 && monObjects.length > 0" disabled>
+                  Ничего не найдено
+                </mat-option>
+                <mat-option *ngIf="monObjects.length === 0" disabled>
+                  Загрузка данных...
+                </mat-option>
+              </mat-select>
+              <mat-hint>Всего объектов: {{monObjects.length}}, найдено: {{filteredMonObjects.length}}</mat-hint>
+            </mat-form-field>
+          </div>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Обьект мониторинга</mat-label>
-          <input class="message-input" matInput formControlName="objName" required />
-        </mat-form-field>
+          <div class="info-panel">
+            <mat-icon>info</mat-icon>
+            <span>Выберите объект, для которого будет строиться прогноз метрик</span>
+          </div>
+        </div>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Модель</mat-label>
-          <input class="message-input" matInput formControlName="model" required />
-        </mat-form-field>
+        <div class="step-actions">
+          <button mat-button type="button" (click)="onNoClick()">
+            Отмена
+          </button>
+          <button mat-flat-button color="primary" matStepperNext 
+                  [disabled]="!monObjectFormGroup.valid">
+            Далее
+          </button>
+        </div>
+      </form>
+    </mat-step>
 
-      <hr class="my-2" />
-    </mat-card-content>
+    <!-- Step 2: Metric Selection -->
+    <mat-step [stepControl]="metricFormGroup" label="Метрика">
+      <form [formGroup]="metricFormGroup">
+        <div class="step-content">
+          <h3 class="step-title">Шаг 2: Выберите метрику для прогнозирования</h3>
+          
+          <!-- Debug info -->
+          <div *ngIf="metrics.length === 0" class="warning-panel">
+            <mat-icon>warning</mat-icon>
+            <span>Метрики не загружены. Проверьте подключение к API.</span>
+          </div>
+          
+          <!-- Метрика с поиском -->
+          <div class="form-field-wrapper">
+            <div class="search-wrapper">
+              <mat-form-field appearance="outline" class="search-field">
+                <mat-label>Поиск метрики</mat-label>
+                <input matInput 
+                       [(ngModel)]="metricSearchTerm" 
+                       [ngModelOptions]="{standalone: true}"
+                       (input)="filterMetrics()"
+                       (keyup)="filterMetrics()"
+                       placeholder="Введите название или группу...">
+                <mat-icon matSuffix>search</mat-icon>
+              </mat-form-field>
+            </div>
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Метрика</mat-label>
+              <mat-select formControlName="metric_name" required>
+                <mat-option *ngFor="let metric of filteredMetrics; trackBy: trackByMetricName" [value]="metric.name">
+                  {{metric.name}}
+                  <span *ngIf="metric.group" class="option-secondary"> ({{metric.group}})</span>
+                </mat-option>
+                <mat-option *ngIf="filteredMetrics.length === 0 && metrics.length > 0" disabled>
+                  Ничего не найдено
+                </mat-option>
+                <mat-option *ngIf="metrics.length === 0" disabled>
+                  Загрузка данных...
+                </mat-option>
+              </mat-select>
+              <mat-hint>Всего метрик: {{metrics.length}}, найдено: {{filteredMetrics.length}}</mat-hint>
+            </mat-form-field>
+          </div>
 
-    <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>Отмена</button>
-      <button mat-flat-button color="primary" [mat-dialog-close]="true" (click)="handleFormSubmit()" [disabled]="!form.valid" routerLink="/anomaly">Инициировать прогноз</button>
+          <div class="info-panel">
+            <mat-icon>info</mat-icon>
+            <span>Выберите метрику, для которой нужно построить прогноз</span>
+          </div>
+        </div>
 
-    </mat-dialog-actions></form>
+        <div class="step-actions">
+          <button mat-button type="button" matStepperPrevious>
+            Назад
+          </button>
+          <button mat-button type="button" (click)="onNoClick()">
+            Отмена
+          </button>
+          <button mat-flat-button color="primary" matStepperNext 
+                  [disabled]="!metricFormGroup.valid">
+            Далее
+          </button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Step 3: Configuration -->
+    <mat-step [stepControl]="configFormGroup" label="Настройки прогноза">
+      <form [formGroup]="configFormGroup" (ngSubmit)="handleFormSubmit()">
+        <div class="step-content">
+          <h3 class="step-title">Шаг 3: Настройте параметры прогнозирования</h3>
+          
+          <!-- Исторические данные -->
+          <div class="form-field-wrapper">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Исторические данные (дней)</mat-label>
+              <input type="number" matInput formControlName="historical_days" required min="1" max="365" />
+              <mat-hint>Количество дней исторических данных для обучения</mat-hint>
+            </mat-form-field>
+          </div>
+
+          <!-- Количество периодов -->
+          <div class="form-field-wrapper">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Количество периодов для прогноза</mat-label>
+              <input type="number" matInput formControlName="forecast_periods" required min="1" max="1000" />
+              <mat-hint>Сколько периодов прогнозировать вперед</mat-hint>
+            </mat-form-field>
+          </div>
+
+          <!-- Частота -->
+          <div class="form-field-wrapper">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Частота</mat-label>
+              <mat-select formControlName="freq" required (selectionChange)="onFreqChange()">
+                <mat-option *ngFor="let freq of frequencies" [value]="freq.value">
+                  {{freq.label}}
+                </mat-option>
+              </mat-select>
+              <mat-hint>Частота прогноза (час, день, неделя, месяц)</mat-hint>
+            </mat-form-field>
+          </div>
+
+          <!-- Шаг запроса (DISABLED) -->
+          <div class="form-field-wrapper">
+            <mat-form-field appearance="outline" class="full-width disabled-field">
+              <mat-label>Шаг запроса</mat-label>
+              <input matInput formControlName="step" required readonly />
+              <mat-icon matSuffix class="info-icon" matTooltip="Автоматически устанавливается на основе частоты">info</mat-icon>
+              <mat-hint>Автоматически: {{configFormGroup.get('step')?.value}}</mat-hint>
+            </mat-form-field>
+          </div>
+
+          <!-- Режим сезонности -->
+          <div class="form-field-wrapper">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Режим сезонности</mat-label>
+              <mat-select formControlName="seasonality_mode" required>
+                <mat-option *ngFor="let mode of seasonalityModes" [value]="mode.value">
+                  {{mode.label}}
+                </mat-option>
+              </mat-select>
+              <mat-hint>Аддитивная - стабильные паттерны, мультипликативная - растущие тренды</mat-hint>
+            </mat-form-field>
+          </div>
+
+          <!-- Гибкость тренда -->
+          <div class="form-field-wrapper">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Гибкость тренда</mat-label>
+              <input type="number" matInput formControlName="changepoint_prior_scale" 
+                     required min="0.001" max="1" step="0.01" />
+              <mat-hint>От 0.001 (консервативно) до 1.0 (агрессивно)</mat-hint>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="step-actions">
+          <button mat-button type="button" matStepperPrevious>
+            Назад
+          </button>
+          <button mat-button type="button" (click)="onNoClick()" [disabled]="submitting">
+            Отмена
+          </button>
+          <button mat-flat-button color="primary" type="submit" 
+                  [disabled]="!configFormGroup.valid || submitting">
+            <mat-spinner *ngIf="submitting" diameter="20" class="button-spinner"></mat-spinner>
+            {{submitting ? 'Создание...' : 'Создать прогноз'}}
+          </button>
+        </div>
+      </form>
+    </mat-step>
+  </mat-stepper>
 </mat-dialog-content>

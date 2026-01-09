@@ -51,6 +51,10 @@ func GenerateServeMux(authMiddleware middleware.AuthMiddleware, cfg configuratio
 	// Initialize metrics query handler
 	metricsQueryHandler := adminhandlers.NewMetricsQueryHandler(vmService)
 
+	// Initialize forecast handler
+	forecastRepo := repository.NewForecastRepository(db)
+	forecastHandler := adminhandlers.NewForecastHandler(forecastRepo, cfg.ForecastCfg.URL)
+
 	// Public read-only monitoring objects endpoints (for development/testing)
 	// TODO: Remove or restrict in production
 	sm.HandleFunc("/api/mon-objects", monObjectHandler.ListMonObjects).Methods("GET")
@@ -188,6 +192,28 @@ func GenerateServeMux(authMiddleware middleware.AuthMiddleware, cfg configuratio
 		}
 		dashboardHandler.DeleteDashboard(w, r)
 	}).Methods("DELETE")
+
+	// Forecast endpoints
+	// Create forecast - Any authenticated user can create a forecast
+	protected.HandleFunc("/forecasts", forecastHandler.CreateForecast).Methods("POST")
+
+	// List forecasts - Users see their own, admins see all
+	protected.HandleFunc("/forecasts", forecastHandler.ListForecasts).Methods("GET")
+
+	// List all forecasts - Admin only
+	protected.HandleFunc("/forecasts/all", func(w http.ResponseWriter, r *http.Request) {
+		if !middleware.HasRole(r.Context(), "realm:ROLE_ADMIN") {
+			http.Error(w, "Forbidden: ROLE_ADMIN required", http.StatusForbidden)
+			return
+		}
+		forecastHandler.ListAllForecasts(w, r)
+	}).Methods("GET")
+
+	// Get specific forecast
+	protected.HandleFunc("/forecasts/{id}", forecastHandler.GetForecast).Methods("GET")
+
+	// Delete forecast - Users can delete their own, admins can delete any
+	protected.HandleFunc("/forecasts/{id}", forecastHandler.DeleteForecast).Methods("DELETE")
 
 	// Business routes
 	sm.HandleFunc("/buisiness/saveObj", func(w http.ResponseWriter, r *http.Request) {

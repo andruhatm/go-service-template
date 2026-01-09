@@ -176,7 +176,13 @@ export class AddWidgetDialogComponent implements OnInit {
         objectName: this.selectedObject?.name || '',
         metricId: formValue.metricId,
         metricName: this.selectedMetric?.name || '',
-        position: { x: 0, y: 0, w: 6, h: 4 }
+        // Gridster properties
+        x: 0,
+        y: 0,
+        cols: 6,  // Default width: half of 12 columns
+        rows: 5,  // Default height: larger for better chart visibility
+        // Legacy position for backwards compatibility
+        position: { x: 0, y: 0, w: 6, h: 5 }
       };
 
       this.dialogRef.close(widget);

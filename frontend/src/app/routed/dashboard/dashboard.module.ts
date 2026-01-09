@@ -23,6 +23,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 // NGX Charts
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 
+// Gridster
+import { GridsterModule } from 'angular-gridster2';
+
 @NgModule({
   declarations: [
     DashboardPage,
@@ -45,7 +48,8 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     MatSlideToggleModule,
     MatAutocompleteModule,
     MatTooltipModule,
-    NgxChartsModule
+    NgxChartsModule,
+    GridsterModule
   ],
   providers: [
     DashboardService

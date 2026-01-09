@@ -35,12 +35,25 @@ export interface Widget {
   metricId: string;
   objectName: string;
   objectId: string;
-  position: { x: number; y: number; w: number; h: number };
+  // Gridster item configuration
+  x: number;
+  y: number;
+  cols: number;
+  rows: number;
+  // Legacy support
+  position?: { x: number; y: number; w: number; h: number };
 }
 
 export interface DashboardData {
   widgets: Widget[];
   layout: any[];
+  // Dashboard settings
+  settings?: {
+    period?: number;           // Time period in seconds (default: 3600)
+    autoRefresh?: boolean;     // Auto-refresh enabled (default: false)
+    refreshInterval?: number;  // Refresh interval in milliseconds (default: 60000)
+    showThresholds?: boolean;  // Show warning/error thresholds (default: false)
+  };
 }
 
 export interface MetricsQueryRequest {
@@ -115,10 +128,19 @@ export class DashboardService {
             observer.next(response.items[0]);
             observer.complete();
           } else {
-            // No dashboard exists, create a new one with empty data
+            // No dashboard exists, create a new one with empty data and default settings
             const createRequest: CreateDashboardRequest = {
               userId: userId,
-              data: { widgets: [], layout: [] }
+              data: { 
+                widgets: [], 
+                layout: [],
+                settings: {
+                  period: 3600,        // Default 1 hour
+                  autoRefresh: false,  // Default disabled
+                  refreshInterval: 60000, // Default 1 minute
+                  showThresholds: false   // Default disabled
+                }
+              }
             };
             this.createDashboard(createRequest).subscribe({
               next: (dashboard) => {

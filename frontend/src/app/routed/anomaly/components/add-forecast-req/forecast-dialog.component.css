@@ -1,81 +1,426 @@
-table {
-  width: 100%!important;
+/* Dialog content container */
+.forecast-dialog-content {
+  width: 750px;
+  max-width: 90vw;
+  padding: 20px !important;
+  max-height: 75vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
+/* Override Material Dialog default padding */
+::ng-deep .mat-dialog-content {
+  padding: 20px !important;
+  margin: 0 !important;
+  max-height: 75vh;
+}
+
+::ng-deep .mat-dialog-title {
+  margin: 0 0 16px 0 !important;
+  padding: 20px 20px 0 20px !important;
+}
+
+/* Ensure all elements use border-box sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Prevent forms from creating horizontal overflow */
+form {
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Ensure all mat-form-fields respect container width */
+::ng-deep .mat-form-field-appearance-outline {
+  max-width: 100%;
+}
+
+::ng-deep .mat-form-field-flex {
+  max-width: 100%;
+}
+
+/* Ensure mat-select panel can overflow dialog */
+::ng-deep .mat-dialog-container {
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  width: 750px !important;
+  max-width: 90vw !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+/* Custom panel class for the dialog */
+::ng-deep .forecast-dialog-panel .mat-dialog-container {
+  width: 750px !important;
+  max-width: 90vw !important;
+  overflow-x: hidden !important;
+}
+
+::ng-deep .cdk-overlay-pane {
+  z-index: 1000;
+  max-width: 90vw;
+}
+
+/* Allow select dropdown to overflow vertically */
+::ng-deep .mat-select-panel {
+  max-width: calc(100vw - 32px) !important;
+}
+
+/* Host element styling */
+:host {
+  display: block;
+  width: 750px;
+  max-width: 90vw;
+}
+
+/* Loading container */
+.loading-container {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.loading-container p {
+  margin-top: 16px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Error message */
+.error-message {
+  display: block;
+  margin-bottom: 20px;
+  padding: 12px;
+  background-color: #ffebee;
+  border-radius: 4px;
+  color: #c62828;
+}
+
+/* Stepper styling */
+::ng-deep .mat-stepper-horizontal {
+  margin-top: 16px;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+::ng-deep .mat-horizontal-stepper-header {
+  padding: 0 16px;
+  height: 65px;
+  max-width: 100%;
+}
+
+::ng-deep .mat-horizontal-stepper-header-container {
+  max-width: 100%;
+}
+
+::ng-deep .mat-step-label {
+  min-width: 100px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+::ng-deep .mat-step-header {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Step content */
+.step-content {
+  padding: 20px 16px;
+  min-height: 380px;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.step-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  color: rgba(0, 0, 0, 0.87);
+  max-width: 100%;
+}
+
+/* Ensure mat-stepper-content wrapper doesn't overflow */
+::ng-deep .mat-horizontal-content-container {
+  overflow-x: hidden;
+  max-width: 100%;
+  padding: 0 !important;
+}
+
+/* Info panel */
+.info-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  margin-top: 16px;
+  background-color: #e3f2fd;
+  border-radius: 4px;
+  color: #1976d2;
+  max-width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+}
+
+.info-panel mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.info-panel span {
+  font-size: 13px;
+  line-height: 1.5;
+  flex: 1;
+  word-wrap: break-word;
+}
+
+/* Warning panel */
+.warning-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+  background-color: #fff3e0;
+  border-radius: 4px;
+  color: #f57c00;
+  border-left: 4px solid #ff9800;
+  max-width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+}
+
+.warning-panel mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.warning-panel span {
+  font-size: 13px;
+  line-height: 1.5;
+  flex: 1;
+  word-wrap: break-word;
+}
+
+/* Step actions */
+.step-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px;
+  margin-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Search wrapper */
+.search-wrapper {
+  margin-bottom: 12px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.search-field {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+::ng-deep .search-field .mat-icon {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+/* Form field wrapper with proper spacing */
+.form-field-wrapper {
+  margin-bottom: 20px;
+  min-height: 85px;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* Full width form fields */
+.full-width {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+::ng-deep .full-width .mat-form-field-wrapper {
+  width: 100%;
+}
+
+/* Mat-hint styling for better readability */
+::ng-deep .mat-form-field .mat-hint {
+  font-size: 12px;
+  line-height: 1.5;
+  margin-top: 6px;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 100%;
+  display: block;
+}
+
+/* Ensure mat-form-field has enough space for hints */
+::ng-deep .mat-form-field {
+  padding-bottom: 8px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+::ng-deep .mat-form-field-wrapper {
+  max-width: 100%;
+  padding-bottom: 0;
+}
+
+::ng-deep .mat-form-field-infix {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Mat-select option secondary text */
+.option-secondary {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 13px;
+}
+
+/* Button spinner */
+.button-spinner {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+/* Disabled field styling */
+.disabled-field {
+  opacity: 0.8;
+}
+
+::ng-deep .disabled-field input[readonly] {
+  cursor: not-allowed;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.info-icon {
+  color: rgba(0, 0, 0, 0.38);
+  cursor: help;
+}
+
+/* Dialog actions (legacy, kept for compatibility) */
+mat-dialog-actions {
+  padding: 16px 0 8px 0;
+  margin-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+/* Legacy styles */
 .mat-card {
   margin-top: 44px;
   padding: 30px;
 }
-/*textarea{*/
-/*  background: rgb(245,245,245);*/
-/*  border-radius: 10px;*/
-/*  width: 925px;*/
-/*  padding-bottom: 30px;*/
-/*  !*padding: 10px;*!*/
-/*}*/
 
 table {
   width: 100%;
 }
 
-textarea.mat-input-element{
+textarea.mat-input-element {
   padding: 10px 0 40px 16px;
   margin-bottom: 20px;
   max-width: 970px;
 }
+
 .mat-card-title {
-  margin-bottom: 14px
+  margin-bottom: 14px;
 }
 
-\:host {
+:host {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 24px;
 }
-.mat-card-title {
-  margin-bottom: 14px
-}
+
 .content {
   display: flex;
   flex-direction: column;
 }
-.mat-form-field {
-  display: inline;
-}
+
 .mat-card-content,
 .mat-card-actions {
   margin-bottom: 0;
   padding-top: 8px;
 }
+
 .mat-card-actions.mat-card-actions-align-end {
   padding-top: 15px;
 }
 
-.mat-card-actions.a.redirect {
-  display: inline-flex;
-  align-content: flex-start;
-}
-.loginLabel{
+.loginLabel {
   padding-bottom: 5px;
 }
-/*a{*/
-/*  text-decoration: none;*/
-/*  visited:*/
-/*    color: inherit;*/
-/*}*/
+
 .redirect {
   float: left;
   text-align: left;
   margin-right: auto;
   padding-left: 16px;
 }
-.mat-card {
-  padding: 30px;
-}
-.create__section.chips{
+
+.create__section.chips {
   margin-top: 15px;
 }
-.timer{
+
+.timer {
   color: gray;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .forecast-dialog-content {
+    width: 95vw;
+    max-width: 95vw;
+    padding: 16px;
+  }
+  
+  ::ng-deep .mat-dialog-container {
+    width: 95vw;
+    max-width: 95vw;
+  }
+  
+  :host {
+    width: 95vw;
+    max-width: 95vw;
+  }
+  
+  .step-content {
+    min-height: 350px;
+    padding: 16px 12px;
+  }
+  
+  .form-field-wrapper {
+    margin-bottom: 16px;
+    min-height: 90px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .forecast-dialog-content {
+    width: 700px;
+    max-width: 85vw;
+  }
+  
+  ::ng-deep .mat-dialog-container {
+    width: 700px;
+    max-width: 85vw;
+  }
+  
+  :host {
+    width: 700px;
+    max-width: 85vw;
+  }
 }

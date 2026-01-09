@@ -13,6 +13,8 @@ sqliteCfg:
   path: "./db"
 victoriaCfg:
   url: http://victoriametrics:8428
+forecastCfg:
+  url: http://forecast-service:8082
 keycloakCfg:
   issuer: http://keycloak:8080/realms/myrealm
   client_id: spa-client

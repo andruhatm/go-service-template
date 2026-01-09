@@ -126,8 +126,38 @@
 
 .dashboard-content {
   min-height: 400px;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
 }
 
+/* Gridster styling */
+gridster {
+  background: #f5f5f5;
+  min-height: 500px;
+  width: 100%;
+}
+
+gridster-item {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+gridster-item:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Gridster grid display */
+gridster .gridster-column,
+gridster .gridster-row {
+  border-right: 1px dashed #e0e0e0;
+  border-bottom: 1px dashed #e0e0e0;
+}
+
+/* Remove old grid styles */
 .widgets-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
