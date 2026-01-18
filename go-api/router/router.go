@@ -55,6 +55,13 @@ func GenerateServeMux(authMiddleware middleware.AuthMiddleware, cfg configuratio
 	forecastRepo := repository.NewForecastRepository(db)
 	forecastHandler := adminhandlers.NewForecastHandler(forecastRepo, cfg.ForecastCfg.URL)
 
+	// Initialize notification handler
+	notificationRepo := repository.NewNotificationRepository(db)
+	notificationHandler := adminhandlers.NewNotificationHandler(notificationRepo)
+
+	// Pass notification handler to forecast handler
+	forecastHandler.SetNotificationHandler(notificationHandler)
+
 	// Public read-only monitoring objects endpoints (for development/testing)
 	// TODO: Remove or restrict in production
 	sm.HandleFunc("/api/mon-objects", monObjectHandler.ListMonObjects).Methods("GET")
@@ -71,6 +78,7 @@ func GenerateServeMux(authMiddleware middleware.AuthMiddleware, cfg configuratio
 
 	// Public metrics query endpoints
 	sm.HandleFunc("/api/metrics/query", metricsQueryHandler.QueryMetrics).Methods("POST")
+	sm.HandleFunc("/api/metrics/query", metricsQueryHandler.QueryMetricsGet).Methods("GET")
 	sm.HandleFunc("/api/metrics/query-instant", metricsQueryHandler.QueryMetricsInstant).Methods("GET")
 
 	// Protected routes
@@ -214,6 +222,34 @@ func GenerateServeMux(authMiddleware middleware.AuthMiddleware, cfg configuratio
 
 	// Delete forecast - Users can delete their own, admins can delete any
 	protected.HandleFunc("/forecasts/{id}", forecastHandler.DeleteForecast).Methods("DELETE")
+
+	// Notification endpoints
+	// List all notifications for current user
+	protected.HandleFunc("/notifications", notificationHandler.ListNotifications).Methods("GET")
+
+	// List unread notifications for current user
+	protected.HandleFunc("/notifications/unread", notificationHandler.ListUnreadNotifications).Methods("GET")
+
+	// Get specific notification
+	protected.HandleFunc("/notifications/{id}", notificationHandler.GetNotification).Methods("GET")
+
+	// Mark notification as read
+	protected.HandleFunc("/notifications/{id}/read", notificationHandler.MarkAsRead).Methods("PUT")
+
+	// Mark all notifications as read
+	protected.HandleFunc("/notifications/mark-all-read", notificationHandler.MarkAllAsRead).Methods("PUT")
+
+	// Delete notification
+	protected.HandleFunc("/notifications/{id}", notificationHandler.DeleteNotification).Methods("DELETE")
+
+	// Create notification (for system use, admins only)
+	protected.HandleFunc("/notifications", func(w http.ResponseWriter, r *http.Request) {
+		if !middleware.HasRole(r.Context(), "realm:ROLE_ADMIN") {
+			http.Error(w, "Forbidden: ROLE_ADMIN required", http.StatusForbidden)
+			return
+		}
+		notificationHandler.CreateNotification(w, r)
+	}).Methods("POST")
 
 	// Business routes
 	sm.HandleFunc("/buisiness/saveObj", func(w http.ResponseWriter, r *http.Request) {

@@ -21,7 +21,7 @@ export class DashboardPage implements OnInit, OnDestroy {
 
   // Gridster configuration
   gridsterOptions: GridsterConfig = {
-    gridType: 'fit',
+    gridType: 'scrollVertical', // Changed from 'fit' to allow vertical scrolling
     displayGrid: 'onDrag&Resize',
     pushItems: true,
     draggable: {
@@ -59,8 +59,11 @@ export class DashboardPage implements OnInit, OnDestroy {
   autoRefresh: boolean = false;
   refreshInterval: number = 60000; // 60 seconds in milliseconds
   showThresholds: boolean = false; // Show warning/error thresholds
+  dateFrom: string | null = null;
+  dateTo: string | null = null;
 
   periodOptions = [
+    { label: 'Кастомный период', value: 0 },
     { label: '15 минут', value: 900 },
     { label: '30 минут', value: 1800 },
     { label: '1 час', value: 3600 },
@@ -144,7 +147,9 @@ export class DashboardPage implements OnInit, OnDestroy {
             period: 3600,
             autoRefresh: false,
             refreshInterval: 60000,
-            showThresholds: false
+            showThresholds: false,
+            dateFrom: null,
+            dateTo: null
           };
         }
 
@@ -153,6 +158,8 @@ export class DashboardPage implements OnInit, OnDestroy {
         this.autoRefresh = this.dashboardData.settings.autoRefresh || false;
         this.refreshInterval = this.dashboardData.settings.refreshInterval || 60000;
         this.showThresholds = this.dashboardData.settings.showThresholds || false;
+        this.dateFrom = this.dashboardData.settings.dateFrom || null;
+        this.dateTo = this.dashboardData.settings.dateTo || null;
 
         // Initialize gridster properties for existing widgets if not present
         this.dashboardData.widgets = this.dashboardData.widgets.map(widget => {
@@ -177,7 +184,9 @@ export class DashboardPage implements OnInit, OnDestroy {
             period: 3600,
             autoRefresh: false,
             refreshInterval: 60000,
-            showThresholds: false
+            showThresholds: false,
+            dateFrom: null,
+            dateTo: null
           }
         };
       }
@@ -235,6 +244,16 @@ export class DashboardPage implements OnInit, OnDestroy {
       this.dashboardData.settings = {};
     }
     this.dashboardData.settings.period = this.period;
+    
+    // When period is selected, clear custom date range
+    if (this.period && this.period > 0) {
+      this.dateFrom = null;
+      this.dateTo = null;
+      this.dashboardData.settings.dateFrom = null;
+      this.dashboardData.settings.dateTo = null;
+      console.log('Custom date range cleared because period was selected');
+    }
+    
     // Save to database
     this.saveDashboardDebounced();
   }
@@ -269,6 +288,24 @@ export class DashboardPage implements OnInit, OnDestroy {
     }
     this.dashboardData.settings.showThresholds = this.showThresholds;
     // Save to database
+    this.saveDashboardDebounced();
+  }
+
+  onDateRangeChange(): void {
+    console.log('Date range changed:', this.dateFrom, this.dateTo);
+    if (!this.dashboardData.settings) {
+      this.dashboardData.settings = {};
+    }
+    this.dashboardData.settings.dateFrom = this.dateFrom;
+    this.dashboardData.settings.dateTo = this.dateTo;
+    
+    // When custom date range is set, clear period
+    if (this.dateFrom || this.dateTo) {
+      this.period = 0;
+      this.dashboardData.settings.period = 0;
+      console.log('Period cleared because custom date range was selected');
+    }
+    
     this.saveDashboardDebounced();
   }
 

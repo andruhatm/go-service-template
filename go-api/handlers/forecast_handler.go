@@ -18,8 +18,9 @@ import (
 
 // ForecastHandler handles forecast-related HTTP requests
 type ForecastHandler struct {
-	repo               *repository.ForecastRepository
-	forecastServiceURL string
+	repo                *repository.ForecastRepository
+	forecastServiceURL  string
+	notificationHandler *NotificationHandler
 }
 
 // NewForecastHandler creates a new forecast handler
@@ -28,6 +29,11 @@ func NewForecastHandler(repo *repository.ForecastRepository, forecastServiceURL 
 		repo:               repo,
 		forecastServiceURL: forecastServiceURL,
 	}
+}
+
+// SetNotificationHandler sets the notification handler (for dependency injection)
+func (h *ForecastHandler) SetNotificationHandler(notificationHandler *NotificationHandler) {
+	h.notificationHandler = notificationHandler
 }
 
 // CreateForecast creates a new forecast and triggers the forecast service
@@ -84,6 +90,18 @@ func (h *ForecastHandler) CreateForecast(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	// Create notification for forecast creation
+	if h.notificationHandler != nil {
+		if err := h.notificationHandler.CreateForecastNotification(
+			userID,
+			models.NotificationTypeForecastCreated,
+			forecast.ID,
+			forecast,
+		); err != nil {
+			slog.Errorf("Failed to create notification: %v", err)
+		}
+	}
+
 	// Trigger forecast service asynchronously
 	go h.triggerForecastService(forecast)
 
@@ -99,8 +117,21 @@ func (h *ForecastHandler) triggerForecastService(forecast *models.Forecast) {
 		Status: models.ForecastStatusProcessing,
 	})
 
+	// Create notification for forecast processing
+	if h.notificationHandler != nil {
+		if err := h.notificationHandler.CreateForecastNotification(
+			forecast.UserID,
+			models.NotificationTypeForecastProcessing,
+			forecast.ID,
+			forecast,
+		); err != nil {
+			slog.Errorf("Failed to create processing notification: %v", err)
+		}
+	}
+
 	// Prepare request to forecast service
 	reqBody := map[string]interface{}{
+		"forecast_id":             forecast.ID, // Add forecast_id for unique identification
 		"metric_name":             forecast.MetricName,
 		"mon_obj":                 forecast.MonObjectName,
 		"from_timestamp":          forecast.FromTimestamp,
@@ -119,6 +150,19 @@ func (h *ForecastHandler) triggerForecastService(forecast *models.Forecast) {
 			Status:       models.ForecastStatusFailed,
 			ErrorMessage: &errMsg,
 		})
+
+		// Create notification for forecast failure
+		if h.notificationHandler != nil {
+			forecast.ErrorMessage = &errMsg
+			if err := h.notificationHandler.CreateForecastNotification(
+				forecast.UserID,
+				models.NotificationTypeForecastFailed,
+				forecast.ID,
+				forecast,
+			); err != nil {
+				slog.Errorf("Failed to create failure notification: %v", err)
+			}
+		}
 		return
 	}
 
@@ -132,6 +176,19 @@ func (h *ForecastHandler) triggerForecastService(forecast *models.Forecast) {
 			Status:       models.ForecastStatusFailed,
 			ErrorMessage: &errMsg,
 		})
+
+		// Create notification for forecast failure
+		if h.notificationHandler != nil {
+			forecast.ErrorMessage = &errMsg
+			if err := h.notificationHandler.CreateForecastNotification(
+				forecast.UserID,
+				models.NotificationTypeForecastFailed,
+				forecast.ID,
+				forecast,
+			); err != nil {
+				slog.Errorf("Failed to create failure notification: %v", err)
+			}
+		}
 		return
 	}
 	defer resp.Body.Close()
@@ -145,6 +202,19 @@ func (h *ForecastHandler) triggerForecastService(forecast *models.Forecast) {
 			Status:       models.ForecastStatusFailed,
 			ErrorMessage: &errMsg,
 		})
+
+		// Create notification for forecast failure
+		if h.notificationHandler != nil {
+			forecast.ErrorMessage = &errMsg
+			if err := h.notificationHandler.CreateForecastNotification(
+				forecast.UserID,
+				models.NotificationTypeForecastFailed,
+				forecast.ID,
+				forecast,
+			); err != nil {
+				slog.Errorf("Failed to create failure notification: %v", err)
+			}
+		}
 		return
 	}
 
@@ -157,6 +227,19 @@ func (h *ForecastHandler) triggerForecastService(forecast *models.Forecast) {
 			Status:       models.ForecastStatusFailed,
 			ErrorMessage: &errMsg,
 		})
+
+		// Create notification for forecast failure
+		if h.notificationHandler != nil {
+			forecast.ErrorMessage = &errMsg
+			if err := h.notificationHandler.CreateForecastNotification(
+				forecast.UserID,
+				models.NotificationTypeForecastFailed,
+				forecast.ID,
+				forecast,
+			); err != nil {
+				slog.Errorf("Failed to create failure notification: %v", err)
+			}
+		}
 		return
 	}
 
@@ -184,6 +267,18 @@ func (h *ForecastHandler) triggerForecastService(forecast *models.Forecast) {
 
 	if err := h.repo.Update(forecast.ID, update); err != nil {
 		slog.Errorf("Failed to update forecast status: %v", err)
+	}
+
+	// Create notification for forecast completion
+	if h.notificationHandler != nil {
+		if err := h.notificationHandler.CreateForecastNotification(
+			forecast.UserID,
+			models.NotificationTypeForecastCompleted,
+			forecast.ID,
+			forecast,
+		); err != nil {
+			slog.Errorf("Failed to create completion notification: %v", err)
+		}
 	}
 }
 

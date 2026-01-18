@@ -33,7 +33,7 @@ class VictoriaMetricsClient:
         
         Args:
             metric_name: Name of the metric to query
-            mon_obj: Monitoring object identifier
+            mon_obj: Monitoring object identifier (will be used as 'name' label)
             start_timestamp: Start time as Unix timestamp
             end_timestamp: End time as Unix timestamp
             step: Step size for the query (e.g., '1h', '5m', '1d')
@@ -44,8 +44,9 @@ class VictoriaMetricsClient:
         Raises:
             requests.RequestException: If query fails
         """
-        # Build PromQL query
-        promql = f'{metric_name}{{mon_obj="{mon_obj}"}}'
+        # Build PromQL query with name label and type="actual" filter
+        # This queries only actual historical data, not forecasts
+        promql = f'{metric_name}{{name="{mon_obj}",type="actual"}}'
         
         params = {
             'query': promql,
@@ -69,14 +70,14 @@ class VictoriaMetricsClient:
             results = data.get('data', {}).get('result', [])
             
             if not results:
-                logger.warning(f"No data found for metric {metric_name} and mon_obj {mon_obj}")
+                logger.warning(f"No data found for metric {metric_name} with name={mon_obj} and type=actual")
                 return pd.DataFrame(columns=['timestamp', 'value'])
             
             # Extract values from first result (should be only one with specific labels)
             values = results[0].get('values', [])
             
             if not values:
-                logger.warning(f"Empty values for metric {metric_name} and mon_obj {mon_obj}")
+                logger.warning(f"Empty values for metric {metric_name} with name={mon_obj} and type=actual")
                 return pd.DataFrame(columns=['timestamp', 'value'])
             
             # Convert to DataFrame
@@ -101,14 +102,16 @@ class VictoriaMetricsClient:
         self,
         metric_name: str,
         mon_obj: str,
-        forecast_df: pd.DataFrame
+        forecast_df: pd.DataFrame,
+        forecast_id: Optional[str] = None
     ) -> None:
         """Write forecast data to VictoriaMetrics.
         
         Args:
             metric_name: Name of the metric
-            mon_obj: Monitoring object identifier
+            mon_obj: Monitoring object identifier (will be used as 'name' label)
             forecast_df: DataFrame with columns: ds (datetime), yhat (forecast value)
+            forecast_id: Optional forecast UUID to uniquely identify this forecast
             
         Raises:
             requests.RequestException: If write fails
@@ -117,19 +120,24 @@ class VictoriaMetricsClient:
             logger.warning("Empty forecast DataFrame, nothing to write")
             return
         
-        # Convert forecast to Prometheus format
+        # Convert forecast to Prometheus format with name, type, and forecast_id labels
         lines = []
         for _, row in forecast_df.iterrows():
             timestamp_ms = int(row['ds'].timestamp() * 1000)
             value = row['yhat']
-            # Add type=forecast label to distinguish from actual data
-            line = f'{metric_name}{{mon_obj="{mon_obj}",type="forecast"}} {value} {timestamp_ms}'
+            # Build labels: name, type, and optionally forecast_id
+            if forecast_id:
+                line = f'{metric_name}{{name="{mon_obj}",type="forecast",forecast_id="{forecast_id}"}} {value} {timestamp_ms}'
+            else:
+                # Fallback to old format if no forecast_id provided
+                line = f'{metric_name}{{name="{mon_obj}",type="forecast"}} {value} {timestamp_ms}'
             lines.append(line)
         
         prometheus_data = '\n'.join(lines)
         
         url = f"{self.base_url}/api/v1/import/prometheus"
         logger.info(f"Writing {len(lines)} forecast points to VictoriaMetrics")
+        logger.debug(f"Sample forecast line: {lines[0] if lines else 'N/A'}")
         
         try:
             response = self.session.post(
@@ -139,7 +147,10 @@ class VictoriaMetricsClient:
                 timeout=30
             )
             response.raise_for_status()
-            logger.info(f"Successfully wrote forecast data to VictoriaMetrics")
+            if forecast_id:
+                logger.info(f"Successfully wrote forecast data to VictoriaMetrics with labels: name={mon_obj}, type=forecast, forecast_id={forecast_id}")
+            else:
+                logger.info(f"Successfully wrote forecast data to VictoriaMetrics with labels: name={mon_obj}, type=forecast")
             
         except requests.RequestException as e:
             logger.error(f"Failed to write forecast to VictoriaMetrics: {e}")

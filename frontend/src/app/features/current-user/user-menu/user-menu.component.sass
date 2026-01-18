@@ -4,9 +4,6 @@
   align-items: center
   letter-spacing: 1.2px
 
-.dropdown__catalog.col-form-label li
-  max-width: 100%
-
 a
   margin: 0 4px
   align-content: center
@@ -17,3 +14,265 @@ a
 .active
   color: #0e0d0d
 
+// User button styling
+.header__user-btn
+  position: relative
+  cursor: pointer
+  padding: 8px 16px
+  display: flex
+  align-items: center
+  gap: 8px
+  background: transparent
+  border: none
+  color: inherit
+  font-size: inherit
+  font-family: inherit
+
+  .username
+    display: inline-block
+
+  .arrow-icon
+    font-size: 20px
+    width: 20px
+    height: 20px
+
+// Notification badge
+.notification-badge
+  position: absolute
+  top: -5px
+  right: -10px
+  background-color: #f44336
+  color: white
+  border-radius: 50%
+  min-width: 20px
+  height: 20px
+  display: flex
+  align-items: center
+  justify-content: center
+  font-size: 11px
+  font-weight: bold
+  padding: 2px 6px
+  z-index: 10
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2)
+
+// Notification dropdown styles - scoped to notification menu only
+::ng-deep .cdk-overlay-pane
+  &:has(.notification-mat-menu)
+    .mat-mdc-menu-panel
+      min-width: 600px !important
+      max-width: 95vw !important
+      overflow-x: hidden !important
+
+    .mat-mdc-menu-content
+      padding: 0 !important
+      overflow-x: hidden !important
+
+::ng-deep .notification-mat-menu
+  min-width: 600px !important
+  max-width: 95vw !important
+
+  .mat-mdc-menu-panel
+    min-width: 600px !important
+    max-width: 95vw !important
+    overflow-x: hidden !important
+
+  .mat-mdc-menu-content
+    padding: 0 !important
+    overflow-x: hidden !important
+
+.notification-dropdown
+  width: 100%
+  min-width: 600px
+  max-width: 95vw
+  max-height: 600px
+  overflow-x: hidden
+  overflow-y: auto
+  display: flex
+  flex-direction: column
+  background: white
+  box-sizing: border-box
+
+.notification-header
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 16px
+  border-bottom: 1px solid #e0e0e0
+  background: #fafafa
+  box-sizing: border-box
+  width: 100%
+
+  h3
+    margin: 0
+    font-size: 18px
+    font-weight: 600
+    color: #333
+    flex: 1
+    min-width: 0
+
+  .mark-all-btn
+    flex-shrink: 0
+    
+    mat-icon
+      font-size: 20px
+      width: 20px
+      height: 20px
+
+.notification-list
+  max-height: 450px
+  overflow-y: auto
+  overflow-x: hidden
+  padding: 0
+  box-sizing: border-box
+
+  &::-webkit-scrollbar
+    width: 6px
+
+  &::-webkit-scrollbar-track
+    background: #f1f1f1
+
+  &::-webkit-scrollbar-thumb
+    background: #888
+    border-radius: 3px
+
+    &:hover
+      background: #555
+
+.notification-loading
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  padding: 40px
+  color: #999
+
+  p
+    margin-top: 16px
+
+.no-notifications
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  padding: 40px
+  color: #999
+
+  mat-icon
+    font-size: 48px
+    width: 48px
+    height: 48px
+    margin-bottom: 8px
+
+  p
+    margin: 0
+    font-size: 14px
+
+.notification-item
+  display: flex
+  align-items: flex-start
+  padding: 12px 16px
+  cursor: pointer
+  transition: background-color 0.2s
+  border-bottom: 1px solid #f0f0f0
+  position: relative
+  box-sizing: border-box
+  overflow: hidden
+
+  &:hover
+    background-color: #f5f5f5
+
+    .notification-delete
+      opacity: 1
+
+  &.unread
+    background-color: #e3f2fd
+
+    &:hover
+      background-color: #bbdefb
+
+.notification-icon
+  flex-shrink: 0
+  width: 36px
+  height: 36px
+  display: flex
+  align-items: center
+  justify-content: center
+  border-radius: 50%
+  margin-right: 12px
+
+  mat-icon
+    font-size: 20px
+    width: 20px
+    height: 20px
+
+  &.icon-success
+    background-color: #e8f5e9
+    color: #4caf50
+
+  &.icon-error
+    background-color: #ffebee
+    color: #f44336
+
+  &.icon-info
+    background-color: #e3f2fd
+    color: #2196f3
+
+  &.icon-default
+    background-color: #f5f5f5
+    color: #757575
+
+.notification-content
+  flex: 1
+  min-width: 0
+  overflow: hidden
+  word-wrap: break-word
+
+.notification-title
+  font-weight: 600
+  font-size: 14px
+  color: #333
+  margin-bottom: 4px
+  overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap
+  max-width: 100%
+
+.notification-message
+  font-size: 13px
+  color: #666
+  line-height: 1.4
+  margin-bottom: 4px
+  overflow: hidden
+  text-overflow: ellipsis
+  display: -webkit-box
+  -webkit-line-clamp: 3
+  -webkit-box-orient: vertical
+  word-break: break-word
+  max-width: 100%
+
+.notification-time
+  font-size: 12px
+  color: #999
+
+.notification-delete
+  flex-shrink: 0
+  margin-left: 8px
+  opacity: 0
+  transition: opacity 0.2s
+
+  mat-icon
+    font-size: 18px
+    width: 18px
+    height: 18px
+
+.notification-footer
+  border-top: 1px solid #e0e0e0
+  background: #fafafa
+  padding: 0
+  box-sizing: border-box
+  width: 100%
+
+  button
+    width: 100%
+    text-align: left
+    box-sizing: border-box

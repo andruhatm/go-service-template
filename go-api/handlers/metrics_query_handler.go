@@ -23,11 +23,13 @@ func NewMetricsQueryHandler(vmService *victoria.VictoriaMetricsService) *Metrics
 
 // QueryMetricsRequest represents the request for querying metrics
 type QueryMetricsRequest struct {
-	MetricName string `json:"metricName"`
-	ObjectName string `json:"objectName"`
-	StartTime  int64  `json:"startTime"` // Unix timestamp in seconds
-	EndTime    int64  `json:"endTime"`   // Unix timestamp in seconds
-	Step       int    `json:"step"`      // Step in seconds
+	MetricName string  `json:"metricName"`
+	ObjectName string  `json:"objectName"`
+	StartTime  int64   `json:"startTime"`  // Unix timestamp in seconds
+	EndTime    int64   `json:"endTime"`    // Unix timestamp in seconds
+	Step       int     `json:"step"`       // Step in seconds
+	Type       *string `json:"type"`       // Optional: filter by type (e.g., "actual", "forecast")
+	ForecastID *string `json:"forecastId"` // Optional: filter by forecast_id
 }
 
 // QueryMetricsResponse represents the response from VictoriaMetrics
@@ -47,6 +49,68 @@ func (h *MetricsQueryHandler) QueryMetrics(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	h.handleQueryMetrics(w, r, req)
+}
+
+// QueryMetricsGet handles GET /api/metrics/query
+// Supports query params: metricName|metric, objectName|object, startTime|start, endTime|end, step, type, forecastId
+func (h *MetricsQueryHandler) QueryMetricsGet(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query()
+	req := QueryMetricsRequest{
+		MetricName: q.Get("metricName"),
+		ObjectName: q.Get("objectName"),
+	}
+
+	if req.MetricName == "" {
+		req.MetricName = q.Get("metric")
+	}
+	if req.ObjectName == "" {
+		req.ObjectName = q.Get("object")
+	}
+
+	startStr := q.Get("startTime")
+	if startStr == "" {
+		startStr = q.Get("start")
+	}
+	endStr := q.Get("endTime")
+	if endStr == "" {
+		endStr = q.Get("end")
+	}
+	if startStr != "" {
+		start, err := strconv.ParseInt(startStr, 10, 64)
+		if err != nil {
+			http.Error(w, "Invalid startTime parameter", http.StatusBadRequest)
+			return
+		}
+		req.StartTime = start
+	}
+	if endStr != "" {
+		end, err := strconv.ParseInt(endStr, 10, 64)
+		if err != nil {
+			http.Error(w, "Invalid endTime parameter", http.StatusBadRequest)
+			return
+		}
+		req.EndTime = end
+	}
+	if stepStr := q.Get("step"); stepStr != "" {
+		step, err := strconv.Atoi(stepStr)
+		if err != nil {
+			http.Error(w, "Invalid step parameter", http.StatusBadRequest)
+			return
+		}
+		req.Step = step
+	}
+	if t := q.Get("type"); t != "" {
+		req.Type = &t
+	}
+	if forecastID := q.Get("forecastId"); forecastID != "" {
+		req.ForecastID = &forecastID
+	}
+
+	h.handleQueryMetrics(w, r, req)
+}
+
+func (h *MetricsQueryHandler) handleQueryMetrics(w http.ResponseWriter, r *http.Request, req QueryMetricsRequest) {
 	// Validate required fields
 	if req.MetricName == "" {
 		http.Error(w, "MetricName is required", http.StatusBadRequest)
@@ -64,9 +128,20 @@ func (h *MetricsQueryHandler) QueryMetrics(w http.ResponseWriter, r *http.Reques
 		req.Step = 60 // Default to 60 seconds
 	}
 
-	// Build PromQL query
-	// Example: test1{obj="enb27738", type="actual"}
-	promql := fmt.Sprintf(`%s{name="%s"}`, req.MetricName, req.ObjectName)
+	// Build PromQL query with optional filters
+	// Example: test1{name="enb27738", type="actual"}
+	// Example: test1{name="enb27738", type="forecast", forecast_id="uuid"}
+	filters := fmt.Sprintf(`name="%s"`, req.ObjectName)
+
+	if req.Type != nil && *req.Type != "" {
+		filters += fmt.Sprintf(`, type="%s"`, *req.Type)
+	}
+
+	if req.ForecastID != nil && *req.ForecastID != "" {
+		filters += fmt.Sprintf(`, forecast_id="%s"`, *req.ForecastID)
+	}
+
+	promql := fmt.Sprintf(`%s{%s}`, req.MetricName, filters)
 
 	slog.Infof("Querying VictoriaMetrics: query=%s, start=%d, end=%d, step=%d",
 		promql, req.StartTime, req.EndTime, req.Step)

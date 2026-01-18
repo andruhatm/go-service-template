@@ -53,6 +53,8 @@ export interface DashboardData {
     autoRefresh?: boolean;     // Auto-refresh enabled (default: false)
     refreshInterval?: number;  // Refresh interval in milliseconds (default: 60000)
     showThresholds?: boolean;  // Show warning/error thresholds (default: false)
+    dateFrom?: string | null;  // Start date-time (local ISO string)
+    dateTo?: string | null;    // End date-time (local ISO string)
   };
 }
 
@@ -138,7 +140,9 @@ export class DashboardService {
                   period: 3600,        // Default 1 hour
                   autoRefresh: false,  // Default disabled
                   refreshInterval: 60000, // Default 1 minute
-                  showThresholds: false   // Default disabled
+                  showThresholds: false,  // Default disabled
+                  dateFrom: null,
+                  dateTo: null
                 }
               }
             };

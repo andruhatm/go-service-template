@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field, validator
 class ForecastRequest(BaseModel):
     """Request model for forecast endpoint."""
     
+    forecast_id: Optional[str] = Field(None, description="Unique forecast identifier (UUID from forecasts table)")
     metric_name: str = Field(..., description="Name of the metric to forecast")
     mon_obj: str = Field(..., description="Monitoring object identifier")
     from_timestamp: int = Field(..., description="Unix timestamp from which to use existing data points", gt=0)
@@ -33,6 +34,7 @@ class ForecastRequest(BaseModel):
     class Config:
         json_schema_extra = {
             "example": {
+                "forecast_id": "550e8400-e29b-41d4-a716-446655440000",
                 "metric_name": "cpu_usage",
                 "mon_obj": "server-01",
                 "from_timestamp": 1704067200,

@@ -1,0 +1,77 @@
+// Toast notification styles for snackbar
+::ng-deep {
+  .notification-success {
+    background-color: #4caf50 !important;
+    color: white !important;
+
+    .mat-simple-snackbar {
+      color: white;
+    }
+
+    .mat-simple-snackbar-action {
+      color: white !important;
+      font-weight: 600;
+    }
+  }
+
+  .notification-error {
+    background-color: #f44336 !important;
+    color: white !important;
+
+    .mat-simple-snackbar {
+      color: white;
+    }
+
+    .mat-simple-snackbar-action {
+      color: white !important;
+      font-weight: 600;
+    }
+  }
+
+  .notification-info {
+    background-color: #2196f3 !important;
+    color: white !important;
+
+    .mat-simple-snackbar {
+      color: white;
+    }
+
+    .mat-simple-snackbar-action {
+      color: white !important;
+      font-weight: 600;
+    }
+  }
+
+  .notification-default {
+    background-color: #757575 !important;
+    color: white !important;
+
+    .mat-simple-snackbar {
+      color: white;
+    }
+
+    .mat-simple-snackbar-action {
+      color: white !important;
+      font-weight: 600;
+    }
+  }
+
+  // Snackbar container
+  .mat-snack-bar-container {
+    &.notification-success,
+    &.notification-error,
+    &.notification-info,
+    &.notification-default {
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      min-width: 300px;
+      max-width: 500px;
+
+      .mat-simple-snackbar {
+        font-size: 14px;
+        line-height: 1.4;
+      }
+    }
+  }
+}
+

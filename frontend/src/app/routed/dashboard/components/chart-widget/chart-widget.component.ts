@@ -23,6 +23,8 @@ interface Threshold {
 export class ChartWidgetComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
   @Input() widget!: Widget;
   @Input() period: number = 3600; // Default 1 hour in seconds
+  @Input() dateFrom: string | null = null;
+  @Input() dateTo: string | null = null;
   @Input() autoRefresh: boolean = false;
   @Input() refreshInterval: number = 60000; // 60 seconds
   @Input() showThresholds: boolean = false; // Show warning/error thresholds
@@ -101,6 +103,25 @@ export class ChartWidgetComponent implements OnInit, OnDestroy, AfterViewInit, O
     if (changes['showThresholds'] && !changes['showThresholds'].firstChange) {
       this.loadThresholds();
     }
+
+    if (
+      (changes['period'] && !changes['period'].firstChange) ||
+      (changes['dateFrom'] && !changes['dateFrom'].firstChange) ||
+      (changes['dateTo'] && !changes['dateTo'].firstChange)
+    ) {
+      this.loadData();
+    }
+
+    if (
+      (changes['autoRefresh'] && !changes['autoRefresh'].firstChange) ||
+      (changes['refreshInterval'] && !changes['refreshInterval'].firstChange)
+    ) {
+      if (this.autoRefresh) {
+        this.startAutoRefresh();
+      } else {
+        this.stopAutoRefresh();
+      }
+    }
   }
 
   ngOnDestroy(): void {
@@ -155,12 +176,33 @@ export class ChartWidgetComponent implements OnInit, OnDestroy, AfterViewInit, O
 
   private queryMetrics() {
     const now = Math.floor(Date.now() / 1000);
+    const range = this.getCustomRange();
+    const effectivePeriod = this.getEffectivePeriodSeconds(range);
+    
+    // Determine startTime and endTime
+    let startTime: number;
+    let endTime: number;
+    
+    if (range) {
+      // Use custom date range
+      startTime = range.startTime;
+      endTime = range.endTime;
+    } else if (this.period > 0) {
+      // Use predefined period
+      startTime = now - this.period;
+      endTime = now;
+    } else {
+      // Period is 0 (custom) but no dates set - use default 1 hour
+      startTime = now - 3600;
+      endTime = now;
+    }
+    
     const request: MetricsQueryRequest = {
       metricName: this.widget.metricName,
       objectName: this.widget.objectName,
-      startTime: now - this.period,
-      endTime: now,
-      step: Math.max(Math.floor(this.period / 100), 60) // Adaptive step
+      startTime: startTime,
+      endTime: endTime,
+      step: Math.max(Math.floor(effectivePeriod / 100), 60) // Adaptive step
     };
 
     return this.dashboardService.queryMetrics(request);
@@ -202,14 +244,15 @@ export class ChartWidgetComponent implements OnInit, OnDestroy, AfterViewInit, O
 
   private formatTimestamp(timestamp: number): string {
     const date = new Date(timestamp);
+    const effectivePeriod = this.getEffectivePeriodSeconds();
     
     // For periods less than 1 day, show only time
-    if (this.period < 86400) {
+    if (effectivePeriod < 86400) {
       return date.toLocaleTimeString('ru-RU');
     }
     
     // For periods 1 day to 7 days, show date and time
-    if (this.period < 604800) {
+    if (effectivePeriod < 604800) {
       return date.toLocaleString('ru-RU', {
         day: '2-digit',
         month: '2-digit',
@@ -399,6 +442,90 @@ export class ChartWidgetComponent implements OnInit, OnDestroy, AfterViewInit, O
       case '=': return '=';
       default: return operator;
     }
+  }
+
+  private getCustomRange(): { startTime: number; endTime: number } | null {
+    const now = Math.floor(Date.now() / 1000);
+    
+    // If neither date is set, return null
+    if (!this.dateFrom && !this.dateTo) {
+      return null;
+    }
+    
+    let startTime: number;
+    let endTime: number;
+    
+    // Parse dates
+    const start = this.dateFrom ? Date.parse(this.dateFrom) : null;
+    const end = this.dateTo ? Date.parse(this.dateTo) : null;
+    
+    // Case 1: Both dates are set
+    if (start !== null && end !== null) {
+      if (Number.isNaN(start) || Number.isNaN(end)) {
+        console.warn('Invalid date format:', this.dateFrom, this.dateTo);
+        return null;
+      }
+      
+      if (end <= start) {
+        console.warn('End date must be after start date:', this.dateFrom, this.dateTo);
+        return null;
+      }
+      
+      return {
+        startTime: Math.floor(start / 1000),
+        endTime: Math.floor(end / 1000)
+      };
+    }
+    
+    // Case 2: Only "Date from" is set - use it as start, current time as end
+    if (start !== null && end === null) {
+      if (Number.isNaN(start)) {
+        console.warn('Invalid start date format:', this.dateFrom);
+        return null;
+      }
+      
+      startTime = Math.floor(start / 1000);
+      endTime = now;
+      
+      // Validate: start must be before now
+      if (startTime >= now) {
+        console.warn('Start date must be before current time:', this.dateFrom);
+        return null;
+      }
+      
+      console.log('Using custom start date with current time as end:', { startTime, endTime });
+      return { startTime, endTime };
+    }
+    
+    // Case 3: Only "Date to" is set - use current time minus default period as start
+    if (start === null && end !== null) {
+      if (Number.isNaN(end)) {
+        console.warn('Invalid end date format:', this.dateTo);
+        return null;
+      }
+      
+      endTime = Math.floor(end / 1000);
+      // Use 1 hour before end date as start
+      startTime = endTime - 3600;
+      
+      console.log('Using custom end date with calculated start:', { startTime, endTime });
+      return { startTime, endTime };
+    }
+    
+    return null;
+  }
+
+  private getEffectivePeriodSeconds(range: { startTime: number; endTime: number } | null = this.getCustomRange()): number {
+    if (range) {
+      // Use custom range duration
+      return Math.max(range.endTime - range.startTime, 60);
+    }
+    if (this.period > 0) {
+      // Use predefined period
+      return this.period;
+    }
+    // Default to 1 hour if period is 0 and no custom range
+    return 3600;
   }
 }
 

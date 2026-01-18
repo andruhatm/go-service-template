@@ -17,6 +17,24 @@
             </div>
 
             <div class="control-group">
+              <label>Дата с:</label>
+              <input
+                class="form-control"
+                type="datetime-local"
+                [(ngModel)]="dateFrom"
+                (change)="onDateRangeChange()">
+            </div>
+
+            <div class="control-group">
+              <label>Дата по:</label>
+              <input
+                class="form-control"
+                type="datetime-local"
+                [(ngModel)]="dateTo"
+                (change)="onDateRangeChange()">
+            </div>
+
+            <div class="control-group">
               <label>
                 <input type="checkbox" [(ngModel)]="autoRefresh" (change)="onAutoRefreshChange()">
                 Автообновление
@@ -71,6 +89,8 @@
               <app-chart-widget 
                 [widget]="widget" 
                 [period]="period"
+                [dateFrom]="dateFrom"
+                [dateTo]="dateTo"
                 [autoRefresh]="autoRefresh"
                 [refreshInterval]="refreshInterval"
                 [showThresholds]="showThresholds"

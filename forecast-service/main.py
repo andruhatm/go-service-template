@@ -124,7 +124,8 @@ async def create_forecast(request: ForecastRequest):
             freq=request.freq,
             step=request.step,
             seasonality_mode=request.seasonality_mode,
-            changepoint_prior_scale=request.changepoint_prior_scale
+            changepoint_prior_scale=request.changepoint_prior_scale,
+            forecast_id=request.forecast_id
         )
         
         logger.info(f"Forecast completed successfully: {result}")

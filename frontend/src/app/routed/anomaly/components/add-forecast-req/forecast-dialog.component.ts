@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, ViewEncapsulation} from "@angular/core";
 import {MatDialogRef} from "@angular/material/dialog";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ForecastService, ForecastCreateRequest} from "../../../../services/forecast.service";
@@ -11,6 +11,7 @@ import {of} from 'rxjs';
   selector: 'forecast-add-dialog',
   styleUrls: ['./forecast-dialog.component.css'],
   templateUrl: './forecast.dialog.component.html',
+  encapsulation: ViewEncapsulation.None
 })
 export class ForecastDialogComponent implements OnInit{
   // Step 1: Mon Object selection

@@ -1,19 +1,79 @@
 <ng-container *ngIf="isLoggedIn">
   <ng-container *ngIf="isLoggedIn; else anonymousMenu">
-      <div class="header__menu-btn" data-dropdown-btn="menu">
-        <div class="header__user-btn" data-dropdown-btn="user">
-          {{username}}<i class="icon-Arrow_Below"></i>
+    <!-- User button with badge -->
+    <button 
+      class="header__user-btn" 
+      [matMenuTriggerFor]="notificationMenu"
+      mat-button>
+      <!-- Badge для уведомлений -->
+      <span class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+      <span class="username">{{username}}</span>
+      <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
+    </button>
+
+    <!-- Material Menu для уведомлений -->
+    <mat-menu #notificationMenu="matMenu" class="notification-mat-menu" xPosition="before" (opened)="onMenuOpened()">
+      <div class="notification-dropdown" (click)="$event.stopPropagation()">
+        <!-- Header уведомлений -->
+        <div class="notification-header">
+          <h3>Уведомления</h3>
+          <button 
+            class="mark-all-btn" 
+            *ngIf="unreadCount > 0" 
+            (click)="markAllAsRead()"
+            mat-icon-button
+            title="Отметить все как прочитанные">
+            <mat-icon>done_all</mat-icon>
+          </button>
+        </div>
+
+        <!-- Список уведомлений -->
+        <div class="notification-list">
+          <div *ngIf="loading" class="notification-loading">
+            <mat-spinner diameter="30"></mat-spinner>
+            <p>Загрузка...</p>
+          </div>
+
+          <div *ngIf="!loading && notifications.length === 0" class="no-notifications">
+            <mat-icon>notifications_none</mat-icon>
+            <p>Нет уведомлений</p>
+          </div>
+
+          <div 
+            *ngFor="let notification of notifications" 
+            class="notification-item"
+            [class.unread]="notification.status === 'unread'"
+            (click)="onNotificationClick(notification)">
+            
+            <div class="notification-icon" [ngClass]="getNotificationIconClass(notification.type)">
+              <mat-icon>{{ getNotificationIcon(notification.type) }}</mat-icon>
+            </div>
+
+            <div class="notification-content">
+              <div class="notification-title">{{ notification.title }}</div>
+              <div class="notification-message">{{ notification.message }}</div>
+              <div class="notification-time">{{ formatDate(notification.created_at) }}</div>
+            </div>
+
+            <button 
+              class="notification-delete" 
+              (click)="deleteNotification(notification, $event)"
+              mat-icon-button
+              title="Удалить">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Footer с кнопкой выхода -->
+        <div class="notification-footer">
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Выйти</span>
+          </button>
         </div>
       </div>
-      <nav class="dropdown dropdown--design-01" style="margin-top: 30px" data-dropdown-list="user">
-        <div *ngIf="this.isLoggedIn">
-          <ul class="dropdown__catalog col-form-label">
-            <li class="col-xs-6 "><a routerLinkActive="active" routerLink="/personal-cabinet">Личный кабинет</a></li>
-<!--            <li class="col-xs-6 "><a routerLinkActive="active" routerLink="/chat">Чат</a></li>-->
-            <li class="col-xs-6"><a  routerLinkActive="active-link" exact (click)="logout()" routerLink="/">Выйти</a></li>
-          </ul>
-        </div>
-      </nav>
+    </mat-menu>
   </ng-container>
 
   <ng-template #anonymousMenu>

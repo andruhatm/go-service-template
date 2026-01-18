@@ -17,3 +17,169 @@
   overflow-x: hidden !important;
   box-sizing: border-box;
 }
+
+/* Fix mat-hint clipping in forecast dialog */
+.forecast-dialog-panel .mat-form-field-subscript-wrapper {
+  position: static !important;
+  overflow: visible !important;
+  margin-top: 0.5em !important;
+  min-height: 3em !important;
+}
+
+.forecast-dialog-panel .mat-form-field-hint-wrapper {
+  position: static !important;
+  display: block !important;
+}
+
+.forecast-dialog-panel .mat-hint {
+  position: static !important;
+  display: block !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  word-wrap: break-word !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+  margin-top: 0.5em !important;
+  padding: 4px 0 8px 0 !important;
+  min-height: 2.5em !important;
+  max-width: 100% !important;
+}
+
+.forecast-dialog-panel .mat-form-field {
+  margin-bottom: 1em !important;
+}
+
+.forecast-dialog-panel .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.forecast-dialog-panel .mat-form-field-appearance-outline .mat-form-field-subscript-wrapper {
+  position: static !important;
+  margin-top: 0.75em !important;
+}
+
+/* Notification Toast Styles */
+.notification-success {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.notification-success .mat-simple-snackbar {
+  color: white;
+}
+
+.notification-success .mat-simple-snackbar-action {
+  color: white !important;
+  font-weight: 600;
+}
+
+.notification-error {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+.notification-error .mat-simple-snackbar {
+  color: white;
+}
+
+.notification-error .mat-simple-snackbar-action {
+  color: white !important;
+  font-weight: 600;
+}
+
+.notification-info {
+  background-color: #2196f3 !important;
+  color: white !important;
+}
+
+.notification-info .mat-simple-snackbar {
+  color: white;
+}
+
+.notification-info .mat-simple-snackbar-action {
+  color: white !important;
+  font-weight: 600;
+}
+
+.notification-default {
+  background-color: #757575 !important;
+  color: white !important;
+}
+
+.notification-default .mat-simple-snackbar {
+  color: white;
+}
+
+.notification-default .mat-simple-snackbar-action {
+  color: white !important;
+  font-weight: 600;
+}
+
+/* Snackbar container improvements */
+.mat-snack-bar-container.notification-success,
+.mat-snack-bar-container.notification-error,
+.mat-snack-bar-container.notification-info,
+.mat-snack-bar-container.notification-default {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  min-width: 300px;
+  max-width: 500px;
+}
+
+.mat-snack-bar-container .mat-simple-snackbar {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Header alignment fixes */
+.header > .container {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+}
+
+.header__create {
+  display: flex !important;
+  align-items: center !important;
+  margin-left: 15px !important;
+}
+
+.header__create a {
+  display: flex !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+}
+
+.header__notification {
+  display: flex !important;
+  align-items: center !important;
+  margin-left: auto !important;
+}
+
+/* Fix user menu alignment */
+app-user-menu {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Notification menu panel width - only for notification menu */
+.cdk-overlay-pane:has(.notification-mat-menu) .mat-mdc-menu-panel,
+.mat-mdc-menu-panel.notification-mat-menu {
+  min-width: 600px !important;
+  max-width: 95vw !important;
+  overflow-x: hidden !important;
+}
+
+.cdk-overlay-pane:has(.notification-mat-menu) .mat-mdc-menu-content,
+.notification-mat-menu .mat-mdc-menu-content {
+  padding: 0 !important;
+  overflow-x: hidden !important;
+}
+
+/* Ensure forecast dialog is not affected */
+.forecast-dialog-panel,
+.mat-mdc-dialog-container {
+  min-width: unset !important;
+  max-width: unset !important;
+}

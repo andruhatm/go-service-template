@@ -1,0 +1,82 @@
+[
+  {
+    "name": "test_node_01",
+    "type": "eNodeB",
+    "technology": "4G",
+    "platform": "Ericsson",
+    "network": "Test Network",
+    "manufacturer": "Ericsson"
+  },
+  {
+    "name": "test_node_02",
+    "type": "eNodeB",
+    "technology": "4G",
+    "platform": "Huawei",
+    "network": "Test Network",
+    "manufacturer": "Huawei"
+  },
+  {
+    "name": "test_node_03",
+    "type": "gNodeB",
+    "technology": "5G",
+    "platform": "Nokia",
+    "network": "Test Network",
+    "manufacturer": "Nokia"
+  },
+  {
+    "name": "test_node_04",
+    "type": "gNodeB",
+    "technology": "5G",
+    "platform": "Samsung",
+    "network": "Test Network",
+    "manufacturer": "Samsung"
+  },
+  {
+    "name": "test_node_05",
+    "type": "eNodeB",
+    "technology": "4G",
+    "platform": "ZTE",
+    "network": "Test Network",
+    "manufacturer": "ZTE"
+  },
+  {
+    "name": "test_node_06",
+    "type": "Server",
+    "technology": "Core",
+    "platform": "Dell",
+    "network": "Test Network",
+    "manufacturer": "Dell"
+  },
+  {
+    "name": "test_node_07",
+    "type": "Router",
+    "technology": "Network",
+    "platform": "Cisco",
+    "network": "Test Network",
+    "manufacturer": "Cisco"
+  },
+  {
+    "name": "test_node_08",
+    "type": "gNodeB",
+    "technology": "5G",
+    "platform": "Ericsson",
+    "network": "Test Network",
+    "manufacturer": "Ericsson"
+  },
+  {
+    "name": "test_node_09",
+    "type": "eNodeB",
+    "technology": "4G",
+    "platform": "Huawei",
+    "network": "Test Network",
+    "manufacturer": "Huawei"
+  },
+  {
+    "name": "test_node_10",
+    "type": "Server",
+    "technology": "Core",
+    "platform": "HP",
+    "network": "Test Network",
+    "manufacturer": "HP"
+  }
+]

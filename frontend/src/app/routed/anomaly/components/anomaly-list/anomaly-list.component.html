@@ -47,6 +47,9 @@
                   </mat-chip>
                 </span>
                 <span *ngIf="column.columnDef === 'actions'">
+                  <button mat-icon-button color="primary" (click)="viewForecast(row)" matTooltip="Просмотр">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
                   <button mat-icon-button color="warn" (click)="deleteForecast(row)" matTooltip="Удалить">
                     <mat-icon>delete</mat-icon>
                   </button>

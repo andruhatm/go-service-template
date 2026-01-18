@@ -20,9 +20,17 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatChipsModule} from "@angular/material/chips";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatStepperModule} from "@angular/material/stepper";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {ForecastDetailComponent} from "./components/forecast-detail/forecast-detail.component";
+import {NgxChartsModule} from "@swimlane/ngx-charts";
 
 @NgModule({
-  declarations: [AnomalypageComponent, AnomalyListComponent, ForecastDialogComponent],
+  declarations: [
+    AnomalypageComponent,
+    AnomalyListComponent,
+    ForecastDialogComponent,
+    ForecastDetailComponent
+  ],
   imports: [
     AnomalyRoutingModule,
     CommonModule,
@@ -43,7 +51,14 @@ import {MatStepperModule} from "@angular/material/stepper";
     MatChipsModule,
     MatTooltipModule,
     MatStepperModule,
+    MatSnackBarModule,
+    NgxChartsModule,
   ],
-  exports: [AnomalypageComponent,AnomalyListComponent,ForecastDialogComponent]
+  exports: [
+    AnomalypageComponent,
+    AnomalyListComponent,
+    ForecastDialogComponent,
+    ForecastDetailComponent
+  ]
 })
 export class AnomalyModule { }

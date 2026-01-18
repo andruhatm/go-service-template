@@ -24,7 +24,7 @@ The Forecast Service is a Python-based microservice that provides time-series fo
 - **Facebook Prophet**: State-of-the-art time-series forecasting
 - **VictoriaMetrics Integration**: Seamless data ingestion and storage
 - **Flexible Parameters**: Customizable forecast periods, frequencies, and model parameters
-- **Labeled Forecasts**: Automatic labeling with `type=forecast` for easy querying
+- **Labeled Forecasts**: Automatic labeling with `name` and `type` labels (`type=actual` for historical data, `type=forecast` for predictions)
 
 ## Getting Started
 
@@ -167,31 +167,45 @@ curl -X POST http://localhost:8082/api/v1/forecast \
 
 ## Querying Forecast Data
 
-After generating a forecast, you can query the forecasted data from VictoriaMetrics:
+After generating a forecast, you can query the forecasted data from VictoriaMetrics using the new label format:
+
+### Label Format
+
+- **Historical/Actual data**: `{name="enb27738", type="actual"}`
+- **Forecasted data**: `{name="enb27738", type="forecast"}`
+
+### Query Actual Data Only
+
+```bash
+curl 'http://localhost:8428/api/v1/query_range?query=cpu_usage{name="server-01",type="actual"}&start=1704067200&end=1704153600&step=1h'
+```
 
 ### Query Forecasted Data Only
 
 ```bash
-curl 'http://localhost:8428/api/v1/query_range?query=cpu_usage{mon_obj="server-01",type="forecast"}&start=1704067200&end=1704153600&step=1h'
+curl 'http://localhost:8428/api/v1/query_range?query=cpu_usage{name="server-01",type="forecast"}&start=1704067200&end=1704153600&step=1h'
 ```
 
 ### Query Both Actual and Forecasted Data
 
 ```bash
-curl 'http://localhost:8428/api/v1/query_range?query=cpu_usage{mon_obj="server-01"}&start=1704067200&end=1704153600&step=1h'
+curl 'http://localhost:8428/api/v1/query_range?query=cpu_usage{name="server-01"}&start=1704067200&end=1704153600&step=1h'
 ```
 
 ### Distinguish in PromQL
 
 ```promql
 # Actual data only
-cpu_usage{mon_obj="server-01",type!="forecast"}
+cpu_usage{name="server-01", type="actual"}
 
 # Forecasted data only
-cpu_usage{mon_obj="server-01",type="forecast"}
+cpu_usage{name="server-01", type="forecast"}
 
-# Both with legend
-cpu_usage{mon_obj="server-01"} or cpu_usage{mon_obj="server-01",type="forecast"}
+# Both actual and forecast
+cpu_usage{name="server-01"}
+
+# Both with different series (for comparison)
+cpu_usage{name="server-01", type="actual"} or cpu_usage{name="server-01", type="forecast"}
 ```
 
 ## Integration with Frontend
@@ -345,12 +359,13 @@ Always handle potential errors:
 
 ### Issue: "No historical data found"
 
-**Cause**: Metric or mon_obj doesn't exist in VictoriaMetrics, or time range is incorrect.
+**Cause**: Metric with `name` and `type=actual` labels doesn't exist in VictoriaMetrics, or time range is incorrect.
 
 **Solution**:
-1. Verify metric exists: `curl 'http://localhost:8428/api/v1/query?query=metric_name{mon_obj="value"}'`
+1. Verify metric exists: `curl 'http://localhost:8428/api/v1/query?query=metric_name{name="value",type="actual"}'`
 2. Check timestamp is in the past
 3. Ensure data exists in the specified time range
+4. Make sure your historical data has the `type="actual"` label
 
 ### Issue: "Insufficient data points"
 

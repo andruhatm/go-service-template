@@ -9,6 +9,18 @@
   box-sizing: border-box;
 }
 
+/* Force all form fields inside dialog to show hints properly */
+.forecast-dialog-content .mat-form-field {
+  display: block;
+  margin-bottom: 1em;
+}
+
+.forecast-dialog-content .mat-form-field-subscript-wrapper {
+  position: static !important;
+  overflow: visible !important;
+  min-height: 3em !important;
+}
+
 /* Override Material Dialog default padding */
 ::ng-deep .mat-dialog-content {
   padding: 20px !important;
@@ -36,6 +48,16 @@ form {
 /* Ensure all mat-form-fields respect container width */
 ::ng-deep .mat-form-field-appearance-outline {
   max-width: 100%;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-subscript-wrapper {
+  position: static !important;
+  margin-top: 0.5em;
 }
 
 ::ng-deep .mat-form-field-flex {
@@ -127,17 +149,18 @@ form {
 
 /* Step content */
 .step-content {
-  padding: 20px 16px;
-  min-height: 380px;
+  padding: 20px 16px 24px 16px;
+  min-height: 440px;
   max-width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
+  overflow-y: visible;
 }
 
 .step-title {
   font-size: 16px;
   font-weight: 500;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   color: rgba(0, 0, 0, 0.87);
   max-width: 100%;
 }
@@ -156,6 +179,7 @@ form {
   gap: 12px;
   padding: 12px;
   margin-top: 16px;
+  margin-bottom: 0;
   background-color: #e3f2fd;
   border-radius: 4px;
   color: #1976d2;
@@ -234,6 +258,11 @@ form {
   box-sizing: border-box;
 }
 
+/* Add padding to search field */
+::ng-deep .search-field .mat-form-field-wrapper {
+  padding-bottom: 1em;
+}
+
 ::ng-deep .search-field .mat-icon {
   color: rgba(0, 0, 0, 0.54);
 }
@@ -241,10 +270,10 @@ form {
 /* Form field wrapper with proper spacing */
 .form-field-wrapper {
   margin-bottom: 20px;
-  min-height: 85px;
+  min-height: 100px;
   max-width: 100%;
   box-sizing: border-box;
-  overflow-x: hidden;
+  overflow: visible;
 }
 
 /* Full width form fields */
@@ -260,18 +289,29 @@ form {
 
 /* Mat-hint styling for better readability */
 ::ng-deep .mat-form-field .mat-hint {
-  font-size: 12px;
-  line-height: 1.5;
-  margin-top: 6px;
-  white-space: normal;
-  word-wrap: break-word;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+  margin-top: 0.5em !important;
+  padding: 4px 0;
+  white-space: normal !important;
+  word-wrap: break-word !important;
   max-width: 100%;
-  display: block;
+  display: block !important;
+  min-height: 2em;
+  position: static !important;
+  overflow: visible !important;
+}
+
+/* Ensure hint spacer doesn't collapse */
+::ng-deep .mat-form-field-hint-spacer {
+  flex-grow: 1;
+  min-height: 2em;
 }
 
 /* Ensure mat-form-field has enough space for hints */
 ::ng-deep .mat-form-field {
-  padding-bottom: 8px;
+  padding-bottom: 0;
+  margin-bottom: 0.5em;
   max-width: 100%;
   box-sizing: border-box;
 }
@@ -279,11 +319,29 @@ form {
 ::ng-deep .mat-form-field-wrapper {
   max-width: 100%;
   padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 ::ng-deep .mat-form-field-infix {
   max-width: 100%;
   box-sizing: border-box;
+}
+
+/* Force subscript wrapper to be static and visible */
+::ng-deep .mat-form-field-subscript-wrapper {
+  position: static !important;
+  margin-top: 0;
+  padding-top: 0.5em;
+  min-height: 2em !important;
+  overflow: visible !important;
+  font-size: 12px;
+}
+
+/* Ensure hint wrapper is visible */
+::ng-deep .mat-form-field-hint-wrapper {
+  position: static !important;
+  padding: 0;
+  display: block !important;
 }
 
 /* Mat-select option secondary text */

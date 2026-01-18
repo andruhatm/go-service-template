@@ -1,0 +1,107 @@
+<div class="container">
+  <div class="forecast-detail-header">
+    <button mat-icon-button (click)="goBack()" matTooltip="Назад к списку">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2>Детали прогноза</h2>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Загрузка данных прогноза...</p>
+  </div>
+
+  <div *ngIf="error && !loading" class="error-container">
+    <mat-icon color="warn">error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="goBack()">
+      Вернуться к списку
+    </button>
+  </div>
+
+  <div *ngIf="forecast && !loading && !error" class="forecast-content">
+    <!-- Forecast Info Card -->
+    <mat-card class="info-card">
+      <mat-card-header>
+        <mat-card-title>Информация о прогнозе</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Метрика:</span>
+            <span class="info-value">{{ forecast.metric_name }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Объект мониторинга:</span>
+            <span class="info-value">{{ forecast.mon_object_name }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Статус:</span>
+            <mat-chip [style.background-color]="getStatusColor(forecast.status)" style="color: white;">
+              <mat-icon style="font-size: 16px; height: 16px; width: 16px; margin-right: 4px;">
+                {{ getStatusIcon(forecast.status) }}
+              </mat-icon>
+              {{ forecast.status }}
+            </mat-chip>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Периоды прогноза:</span>
+            <span class="info-value">{{ forecast.forecast_periods }} ({{ forecast.freq }})</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Шаг:</span>
+            <span class="info-value">{{ forecast.step }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Режим сезонности:</span>
+            <span class="info-value">{{ forecast.seasonality_mode }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Дата создания:</span>
+            <span class="info-value">{{ formatDate(forecast.created_at) }}</span>
+          </div>
+          <div class="info-item" *ngIf="forecast.forecast_start_date">
+            <span class="info-label">Начало прогноза:</span>
+            <span class="info-value">{{ formatDate(forecast.forecast_start_date) }}</span>
+          </div>
+          <div class="info-item" *ngIf="forecast.forecast_end_date">
+            <span class="info-label">Конец прогноза:</span>
+            <span class="info-value">{{ formatDate(forecast.forecast_end_date) }}</span>
+          </div>
+          <div class="info-item" *ngIf="forecast.forecast_points">
+            <span class="info-label">Точек прогноза:</span>
+            <span class="info-value">{{ forecast.forecast_points }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Chart Card -->
+    <mat-card class="chart-card" *ngIf="chartData.length > 0">
+      <mat-card-header>
+        <mat-card-title>График прогноза</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <ngx-charts-line-chart
+            [view]="view"
+            [scheme]="colorScheme"
+            [results]="chartData"
+            [gradient]="gradient"
+            [xAxis]="showXAxis"
+            [yAxis]="showYAxis"
+            [legend]="showLegend"
+            [showXAxisLabel]="showXAxisLabel"
+            [showYAxisLabel]="showYAxisLabel"
+            [xAxisLabel]="xAxisLabel"
+            [yAxisLabel]="yAxisLabel"
+            [autoScale]="autoScale"
+            [timeline]="timeline"
+            [animations]="animations">
+          </ngx-charts-line-chart>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+

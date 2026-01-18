@@ -80,6 +80,11 @@ class ForecastService:
         logger.info(f"Training Prophet model with {len(prophet_df)} data points")
         
         # Initialize and fit Prophet model
+        # Suppress Prophet debug logging
+        import logging as prophet_logging
+        prophet_logging.getLogger('prophet').setLevel(prophet_logging.WARNING)
+        prophet_logging.getLogger('cmdstanpy').setLevel(prophet_logging.WARNING)
+        
         model = Prophet(
             seasonality_mode=seasonality_mode,
             changepoint_prior_scale=changepoint_prior_scale,
@@ -125,7 +130,8 @@ class ForecastService:
         freq: str = 'H',
         step: str = '1h',
         seasonality_mode: str = 'additive',
-        changepoint_prior_scale: float = 0.05
+        changepoint_prior_scale: float = 0.05,
+        forecast_id: str = None
     ) -> dict:
         """Generate forecast and write to VictoriaMetrics.
         
@@ -138,6 +144,7 @@ class ForecastService:
             step: Step size for VictoriaMetrics query
             seasonality_mode: Prophet seasonality mode
             changepoint_prior_scale: Prophet parameter for trend flexibility
+            forecast_id: Optional UUID to uniquely identify this forecast
             
         Returns:
             Dict with forecast summary
@@ -162,7 +169,8 @@ class ForecastService:
         self.victoria_client.write_forecast(
             metric_name=metric_name,
             mon_obj=mon_obj,
-            forecast_df=forecast_df
+            forecast_df=forecast_df,
+            forecast_id=forecast_id
         )
         
         return {
