@@ -41,3 +41,4 @@ SELECT COUNT(*) as test_nodes_count
 FROM mon_objects 
 WHERE name LIKE 'test_node_%';
 
+

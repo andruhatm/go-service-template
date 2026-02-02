@@ -196,3 +196,4 @@ done
 2. Убедитесь, что все сервисы запущены: `docker-compose ps`
 3. Проверьте документацию в TEST_METRICS_GUIDE.md
 
+

@@ -392,3 +392,4 @@ curl -X DELETE "http://localhost:8080/api/notifications/{id}" \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
+

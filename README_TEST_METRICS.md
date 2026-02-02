@@ -323,3 +323,4 @@ docker-compose restart forecast-service
 **Дата:** 2026-01-13  
 **Автор:** go-service-template team
 
+

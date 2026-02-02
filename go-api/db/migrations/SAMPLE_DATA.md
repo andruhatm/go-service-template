@@ -200,3 +200,4 @@ DELETE FROM mon_objects WHERE name IN (
 
 Enjoy your populated database! 🎉
 
+

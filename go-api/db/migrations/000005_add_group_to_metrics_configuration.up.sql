@@ -30,3 +30,4 @@ WHERE name IN ('SS-RSRP', 'SS-RSRQ', 'SS-SINR', 'CSI-RSRP', 'CSI-RSRQ', 'CSI-SIN
 UPDATE metrics_configuration SET "group" = 'Network Performance' 
 WHERE name IN ('Active_Users', 'RRC_Connected_Users', 'Spectral_Efficiency', 'Cell_Availability', 'Interference_Level', 'Retransmission_Rate');
 
+

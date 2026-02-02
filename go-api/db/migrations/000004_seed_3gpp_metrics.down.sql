@@ -18,3 +18,4 @@ DELETE FROM metrics_configuration WHERE name IN (
 );
 
 
+

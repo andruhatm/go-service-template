@@ -33,3 +33,4 @@ SELECT COUNT(*) as "Создано тестовых узлов"
 FROM mon_objects 
 WHERE name LIKE 'test_node_%';
 
+

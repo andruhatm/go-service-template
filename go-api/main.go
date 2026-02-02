@@ -8,7 +8,9 @@ import (
 	"live/db/pg"
 	"live/db/victoria"
 	"live/middleware"
+	"live/repository"
 	r "live/router"
+	"live/services"
 	"net/http"
 	"os"
 	"os/signal"
@@ -77,6 +79,13 @@ func main() {
 	// init router
 	router := r.GenerateServeMux(*authMiddleware, cfg, pgService.GetDB(), vmService)
 
+	// Initialize and start metric importer service
+	ctx := context.Background()
+	metricSourceRepo := repository.NewMetricSourceRepository(pgService.GetDB())
+	metricImporter := services.NewMetricImporterService(metricSourceRepo, vmService)
+	metricImporter.Start(ctx)
+	defer metricImporter.Stop()
+
 	// run server
 	s := &http.Server{
 		Addr:         fmt.Sprintf("%s:%s", cfg.Api.Host, cfg.Api.Port),
@@ -103,7 +112,7 @@ func main() {
 	sig := <-sigCh
 	slog.Println("Got signal:", sig)
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
 	err = s.Shutdown(ctx)
 	if err != nil {
 		slog.Fatal(err)

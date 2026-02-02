@@ -1,0 +1,102 @@
+# Example Prometheus metrics file for testing Metric Sources (EMS)
+# This file demonstrates the correct format for metrics that will be imported
+
+# HELP http_requests_total The total number of HTTP requests
+# TYPE http_requests_total counter
+http_requests_total{method="GET",status="200",service="api"} 12345
+http_requests_total{method="POST",status="201",service="api"} 6789
+http_requests_total{method="GET",status="404",service="api"} 234
+http_requests_total{method="POST",status="500",service="api"} 12
+
+# HELP http_request_duration_seconds HTTP request latency in seconds
+# TYPE http_request_duration_seconds histogram
+http_request_duration_seconds_bucket{le="0.05",service="api"} 24054
+http_request_duration_seconds_bucket{le="0.1",service="api"} 33444
+http_request_duration_seconds_bucket{le="0.2",service="api"} 100392
+http_request_duration_seconds_bucket{le="0.5",service="api"} 129389
+http_request_duration_seconds_bucket{le="1",service="api"} 133988
+http_request_duration_seconds_bucket{le="+Inf",service="api"} 144320
+http_request_duration_seconds_sum{service="api"} 53423
+http_request_duration_seconds_count{service="api"} 144320
+
+# HELP node_cpu_usage_percent CPU usage percentage per node
+# TYPE node_cpu_usage_percent gauge
+node_cpu_usage_percent{node="node1",core="0"} 45.2
+node_cpu_usage_percent{node="node1",core="1"} 52.7
+node_cpu_usage_percent{node="node2",core="0"} 38.9
+node_cpu_usage_percent{node="node2",core="1"} 61.3
+
+# HELP node_memory_usage_bytes Memory usage in bytes
+# TYPE node_memory_usage_bytes gauge
+node_memory_usage_bytes{node="node1"} 8589934592
+node_memory_usage_bytes{node="node2"} 7516192768
+
+# HELP node_disk_io_operations_total Total disk I/O operations
+# TYPE node_disk_io_operations_total counter
+node_disk_io_operations_total{node="node1",device="sda",operation="read"} 98765432
+node_disk_io_operations_total{node="node1",device="sda",operation="write"} 45678901
+node_disk_io_operations_total{node="node2",device="sda",operation="read"} 87654321
+node_disk_io_operations_total{node="node2",device="sda",operation="write"} 34567890
+
+# HELP network_throughput_bytes_per_second Network throughput
+# TYPE network_throughput_bytes_per_second gauge
+network_throughput_bytes_per_second{interface="eth0",direction="in"} 125829120
+network_throughput_bytes_per_second{interface="eth0",direction="out"} 89123456
+network_throughput_bytes_per_second{interface="eth1",direction="in"} 45678912
+network_throughput_bytes_per_second{interface="eth1",direction="out"} 23456789
+
+# HELP database_query_duration_seconds Database query duration
+# TYPE database_query_duration_seconds summary
+database_query_duration_seconds{quantile="0.5",db="postgres"} 0.023
+database_query_duration_seconds{quantile="0.9",db="postgres"} 0.145
+database_query_duration_seconds{quantile="0.99",db="postgres"} 0.389
+database_query_duration_seconds_sum{db="postgres"} 876.543
+database_query_duration_seconds_count{db="postgres"} 12345
+
+# HELP service_up Service availability (1 = up, 0 = down)
+# TYPE service_up gauge
+service_up{service="api",environment="production"} 1
+service_up{service="database",environment="production"} 1
+service_up{service="cache",environment="production"} 1
+service_up{service="queue",environment="production"} 0
+
+# HELP cache_hit_ratio Cache hit ratio
+# TYPE cache_hit_ratio gauge
+cache_hit_ratio{cache="redis",instance="cache1"} 0.876
+cache_hit_ratio{cache="redis",instance="cache2"} 0.923
+cache_hit_ratio{cache="memcached",instance="cache3"} 0.845
+
+# HELP queue_messages_total Total messages in queue
+# TYPE queue_messages_total counter
+queue_messages_total{queue="default",status="pending"} 456
+queue_messages_total{queue="default",status="processing"} 23
+queue_messages_total{queue="default",status="completed"} 98765
+queue_messages_total{queue="default",status="failed"} 234
+
+# 3GPP-specific metrics examples
+# HELP rrc_connection_attempts RRC connection attempts
+# TYPE rrc_connection_attempts counter
+rrc_connection_attempts{cell="Cell001",result="success"} 45678
+rrc_connection_attempts{cell="Cell001",result="failure"} 234
+rrc_connection_attempts{cell="Cell002",result="success"} 38901
+rrc_connection_attempts{cell="Cell002",result="failure"} 156
+
+# HELP active_users Number of active users
+# TYPE active_users gauge
+active_users{cell="Cell001"} 234
+active_users{cell="Cell002"} 189
+active_users{cell="Cell003"} 312
+
+# HELP throughput_mbps Throughput in Mbps
+# TYPE throughput_mbps gauge
+throughput_mbps{cell="Cell001",direction="downlink"} 145.6
+throughput_mbps{cell="Cell001",direction="uplink"} 67.8
+throughput_mbps{cell="Cell002",direction="downlink"} 178.9
+throughput_mbps{cell="Cell002",direction="uplink"} 89.2
+
+# HELP signal_strength_dbm Signal strength in dBm
+# TYPE signal_strength_dbm gauge
+signal_strength_dbm{cell="Cell001",ue="UE001"} -78
+signal_strength_dbm{cell="Cell001",ue="UE002"} -82
+signal_strength_dbm{cell="Cell002",ue="UE003"} -75
+signal_strength_dbm{cell="Cell002",ue="UE004"} -88

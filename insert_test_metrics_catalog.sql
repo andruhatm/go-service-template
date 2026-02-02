@@ -152,3 +152,4 @@ SELECT COUNT(*) as "Создано метрик в каталоге"
 FROM metrics_configuration 
 WHERE name LIKE 'test_metric_%';
 
+

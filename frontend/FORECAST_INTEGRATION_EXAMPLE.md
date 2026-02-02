@@ -666,3 +666,4 @@ describe('ForecastService', () => {
 5. Add error handling and user notifications
 6. Consider adding forecast visualization options (confidence intervals, etc.)
 
+

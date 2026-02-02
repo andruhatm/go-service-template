@@ -1,0 +1,3 @@
+test_metric_uptrend{name="test_node_01",type="actual"} 100 1738134000000
+test_metric_uptrend{name="test_node_01",type="actual"} 101 1738137600000
+test_metric_uptrend{name="test_node_01",type="actual"} 102 1738141200000

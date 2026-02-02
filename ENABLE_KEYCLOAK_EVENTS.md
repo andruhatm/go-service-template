@@ -64,3 +64,4 @@ After enabling events and restarting the backend:
    - Success rate percentage
    - Error rate percentage
 
+

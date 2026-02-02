@@ -579,3 +579,4 @@ this.notificationService.pollNotifications(60000).subscribe(...);
 - [Angular Material Snackbar](https://material.angular.io/components/snack-bar/overview)
 - [RxJS Documentation](https://rxjs.dev/)
 
+

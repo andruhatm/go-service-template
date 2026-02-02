@@ -143,3 +143,4 @@ sm.HandleFunc("/api/mon-objects/{id}", monObjectHandler.GetMonObject).Methods("G
 
 Restart your backend and refresh the page - you should see all your data! 🎉
 
+

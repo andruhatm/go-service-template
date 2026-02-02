@@ -63,3 +63,4 @@ INSERT INTO mon_objects (name, type, technology, platform, network, manufacturer
 ('server-app-01', 'server', 'Linux RHEL', 'HP ProLiant', 'Data Center', 'HP'),
 ('server-backup-01', 'server', 'Linux CentOS', 'Lenovo ThinkSystem', 'Data Center', 'Lenovo');
 
+

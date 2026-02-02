@@ -443,3 +443,4 @@ if (!this.shownNotificationIds.has(notification.id)) {
 3. Создайте прогноз
 4. Наблюдайте уведомления! 🎉
 
+

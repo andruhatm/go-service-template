@@ -355,3 +355,4 @@ func (h *NotificationHandler) SendEmailNotification(notification *models.Notific
 - Проверьте логи сервера для отладки
 - Используйте curl примеры для тестирования API
 
+

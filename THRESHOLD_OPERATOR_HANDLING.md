@@ -391,3 +391,4 @@ The improved threshold handling implementation:
 
 This update ensures the dashboard correctly interprets threshold data from the API and displays it in a way that clearly communicates when metrics are concerning based on their configured thresholds.
 
+

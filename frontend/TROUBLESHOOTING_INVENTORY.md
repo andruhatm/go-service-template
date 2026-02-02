@@ -138,3 +138,4 @@ go run main.go
 
 I recommend **Option B** (temporary public access) for development, then switch to proper authentication for production.
 
+

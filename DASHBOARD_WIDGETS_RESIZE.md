@@ -279,3 +279,4 @@ Potential improvements:
 7. Widget grouping/tabs
 8. Custom widget minimum/maximum sizes per type
 
+

@@ -273,3 +273,4 @@ The migration creates the `dashboards` table in PostgreSQL.
 - All timestamps are managed by the database
 - User ID comes from Keycloak authentication
 
+

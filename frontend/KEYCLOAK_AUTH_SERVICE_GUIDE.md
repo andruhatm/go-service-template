@@ -237,3 +237,4 @@ ngOnInit() {
 2. Subscribe to `authState$` and update UI when state changes
 3. Add `*ngIf="keycloakAuthService.authState$ | async as authState"` in template
 
+

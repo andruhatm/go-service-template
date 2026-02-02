@@ -18,3 +18,4 @@ CREATE INDEX IF NOT EXISTS idx_mon_objects_child_id ON mon_objects(child_id);
 CREATE INDEX IF NOT EXISTS idx_mon_objects_type ON mon_objects(type);
 CREATE INDEX IF NOT EXISTS idx_mon_objects_name ON mon_objects(name);
 
+

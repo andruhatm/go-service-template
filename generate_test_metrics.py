@@ -35,11 +35,13 @@ def pattern_linear_uptrend(hour: int, base: float = 100.0) -> float:
     return max(0, trend + noise)
 
 
-def pattern_linear_downtrend(hour: int, base: float = 200.0) -> float:
+def pattern_linear_downtrend(hour: int, base: float = 300.0) -> float:
     """Линейный нисходящий тренд с небольшим шумом."""
-    trend = base - (hour * 0.3)
+    # Замедленный спуск, чтобы не достигать нуля в тестовой выборке
+    trend = base - (hour * 0.05)
     noise = random.uniform(-5, 5)
-    return max(0, trend + noise)
+    # Минимальное значение 50, чтобы избежать деления на ноль в MAPE
+    return max(50, trend + noise)
 
 
 def pattern_daily_seasonality(hour: int, base: float = 150.0) -> float:
@@ -123,6 +125,47 @@ def pattern_step_changes(hour: int, base: float = 100.0) -> float:
     return max(0, value + noise)
 
 
+def pattern_high_noise_trend(hour: int, base: float = 100.0) -> float:
+    """Восходящий тренд с высоким уровнем шума."""
+    trend = base + (hour * 0.3)
+    # Высокий уровень шума (±20% от текущего значения)
+    noise = random.uniform(-trend * 0.2, trend * 0.2)
+    return max(0, trend + noise)
+
+
+def pattern_high_noise_seasonality(hour: int, base: float = 150.0) -> float:
+    """Суточная сезонность с высоким уровнем шума."""
+    hour_of_day = hour % 24
+    seasonal = base + 40 * math.sin(2 * math.pi * (hour_of_day - 6) / 24)
+    # Высокий шум (±15 единиц)
+    noise = random.uniform(-15, 15)
+    return max(0, seasonal + noise)
+
+
+def pattern_realistic_throughput(hour: int, base: float = 500.0) -> float:
+    """Реалистичная метрика пропускной способности (Mbps)."""
+    # Базовый уровень с восходящим трендом (рост трафика)
+    trend = base + (hour * 0.1)
+    
+    # Суточная сезонность (пик в дневные часы)
+    hour_of_day = hour % 24
+    daily_pattern = 150 * math.sin(2 * math.pi * (hour_of_day - 6) / 24)
+    
+    # Недельная сезонность (будни vs выходные)
+    hour_of_week = hour % (24 * 7)
+    day_of_week = hour_of_week // 24
+    weekly_factor = 1.0 if day_of_week < 5 else 0.7
+    
+    # Случайные всплески (5% вероятность)
+    spike = random.uniform(50, 150) if random.random() < 0.05 else 0
+    
+    # Реалистичный шум
+    noise = random.uniform(-30, 30)
+    
+    value = (trend + daily_pattern) * weekly_factor + spike + noise
+    return max(50, value)
+
+
 # Определяем метрики с их паттернами
 METRICS = [
     {
@@ -184,6 +227,24 @@ METRICS = [
         'mon_object': 'test_node_10',
         'pattern': pattern_step_changes,
         'description': 'Ступенчатые изменения'
+    },
+    {
+        'name': 'test_metric_high_noise_trend',
+        'mon_object': 'test_node_11',
+        'pattern': pattern_high_noise_trend,
+        'description': 'Тренд с высоким шумом'
+    },
+    {
+        'name': 'test_metric_high_noise_season',
+        'mon_object': 'test_node_12',
+        'pattern': pattern_high_noise_seasonality,
+        'description': 'Сезонность с высоким шумом'
+    },
+    {
+        'name': 'test_metric_realistic_throughput',
+        'mon_object': 'test_node_13',
+        'pattern': pattern_realistic_throughput,
+        'description': 'Реалистичная пропускная способность'
     }
 ]
 

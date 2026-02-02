@@ -25,13 +25,20 @@ func (r *ForecastRepository) Create(forecast *models.Forecast) error {
 		INSERT INTO forecasts (
 			id, user_id, mon_object_name, metric_name, from_timestamp,
 			forecast_periods, freq, step, seasonality_mode, changepoint_prior_scale,
-			status, created_at, updated_at
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+			status, auto_refresh_enabled, refresh_interval, next_refresh_at, created_at, updated_at
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
 		RETURNING id, created_at, updated_at
 	`
 
 	id := uuid.New().String()
 	now := time.Now()
+
+	// Calculate next refresh time if auto-refresh is enabled
+	var nextRefreshAt *time.Time
+	if forecast.AutoRefreshEnabled {
+		nextRefresh := calculateNextRefresh(now, forecast.RefreshInterval)
+		nextRefreshAt = &nextRefresh
+	}
 
 	err := r.db.QueryRow(
 		query,
@@ -46,6 +53,9 @@ func (r *ForecastRepository) Create(forecast *models.Forecast) error {
 		forecast.SeasonalityMode,
 		forecast.ChangepointPriorScale,
 		models.ForecastStatusPending,
+		forecast.AutoRefreshEnabled,
+		forecast.RefreshInterval,
+		nextRefreshAt,
 		now,
 		now,
 	).Scan(&forecast.ID, &forecast.CreatedAt, &forecast.UpdatedAt)
@@ -55,6 +65,7 @@ func (r *ForecastRepository) Create(forecast *models.Forecast) error {
 	}
 
 	forecast.Status = models.ForecastStatusPending
+	forecast.NextRefreshAt = nextRefreshAt
 	return nil
 }
 
@@ -64,7 +75,8 @@ func (r *ForecastRepository) GetByID(id string) (*models.Forecast, error) {
 		SELECT id, user_id, mon_object_name, metric_name, from_timestamp,
 			forecast_periods, freq, step, seasonality_mode, changepoint_prior_scale,
 			status, forecast_start_date, forecast_end_date, forecast_points,
-			error_message, created_at, updated_at
+			error_message, auto_refresh_enabled, refresh_interval, last_refresh_at, 
+			next_refresh_at, created_at, updated_at
 		FROM forecasts
 		WHERE id = $1
 	`
@@ -86,6 +98,10 @@ func (r *ForecastRepository) GetByID(id string) (*models.Forecast, error) {
 		&forecast.ForecastEndDate,
 		&forecast.ForecastPoints,
 		&forecast.ErrorMessage,
+		&forecast.AutoRefreshEnabled,
+		&forecast.RefreshInterval,
+		&forecast.LastRefreshAt,
+		&forecast.NextRefreshAt,
 		&forecast.CreatedAt,
 		&forecast.UpdatedAt,
 	)
@@ -106,7 +122,8 @@ func (r *ForecastRepository) List(userID string, limit, offset int) ([]*models.F
 		SELECT id, user_id, mon_object_name, metric_name, from_timestamp,
 			forecast_periods, freq, step, seasonality_mode, changepoint_prior_scale,
 			status, forecast_start_date, forecast_end_date, forecast_points,
-			error_message, created_at, updated_at
+			error_message, auto_refresh_enabled, refresh_interval, last_refresh_at,
+			next_refresh_at, created_at, updated_at
 		FROM forecasts
 		WHERE user_id = $1
 		ORDER BY created_at DESC
@@ -138,6 +155,10 @@ func (r *ForecastRepository) List(userID string, limit, offset int) ([]*models.F
 			&forecast.ForecastEndDate,
 			&forecast.ForecastPoints,
 			&forecast.ErrorMessage,
+			&forecast.AutoRefreshEnabled,
+			&forecast.RefreshInterval,
+			&forecast.LastRefreshAt,
+			&forecast.NextRefreshAt,
 			&forecast.CreatedAt,
 			&forecast.UpdatedAt,
 		)
@@ -160,7 +181,8 @@ func (r *ForecastRepository) ListAll(limit, offset int) ([]*models.Forecast, err
 		SELECT id, user_id, mon_object_name, metric_name, from_timestamp,
 			forecast_periods, freq, step, seasonality_mode, changepoint_prior_scale,
 			status, forecast_start_date, forecast_end_date, forecast_points,
-			error_message, created_at, updated_at
+			error_message, auto_refresh_enabled, refresh_interval, last_refresh_at,
+			next_refresh_at, created_at, updated_at
 		FROM forecasts
 		ORDER BY created_at DESC
 		LIMIT $1 OFFSET $2
@@ -191,6 +213,10 @@ func (r *ForecastRepository) ListAll(limit, offset int) ([]*models.Forecast, err
 			&forecast.ForecastEndDate,
 			&forecast.ForecastPoints,
 			&forecast.ErrorMessage,
+			&forecast.AutoRefreshEnabled,
+			&forecast.RefreshInterval,
+			&forecast.LastRefreshAt,
+			&forecast.NextRefreshAt,
 			&forecast.CreatedAt,
 			&forecast.UpdatedAt,
 		)
@@ -216,8 +242,12 @@ func (r *ForecastRepository) Update(id string, update *models.ForecastUpdateRequ
 			forecast_end_date = COALESCE($3, forecast_end_date),
 			forecast_points = COALESCE($4, forecast_points),
 			error_message = COALESCE($5, error_message),
-			updated_at = $6
-		WHERE id = $7
+			auto_refresh_enabled = COALESCE($6, auto_refresh_enabled),
+			refresh_interval = COALESCE($7, refresh_interval),
+			last_refresh_at = COALESCE($8, last_refresh_at),
+			next_refresh_at = COALESCE($9, next_refresh_at),
+			updated_at = $10
+		WHERE id = $11
 	`
 
 	now := time.Now()
@@ -233,6 +263,10 @@ func (r *ForecastRepository) Update(id string, update *models.ForecastUpdateRequ
 		update.ForecastEndDate,
 		update.ForecastPoints,
 		update.ErrorMessage,
+		update.AutoRefreshEnabled,
+		update.RefreshInterval,
+		update.LastRefreshAt,
+		update.NextRefreshAt,
 		now,
 		id,
 	)
@@ -319,4 +353,81 @@ func (r *ForecastRepository) CountAll() (int, error) {
 	}
 
 	return count, nil
+}
+
+// GetForecastsForRefresh retrieves forecasts that need to be refreshed
+func (r *ForecastRepository) GetForecastsForRefresh() ([]*models.Forecast, error) {
+	query := `
+		SELECT id, user_id, mon_object_name, metric_name, from_timestamp,
+			forecast_periods, freq, step, seasonality_mode, changepoint_prior_scale,
+			status, forecast_start_date, forecast_end_date, forecast_points,
+			error_message, auto_refresh_enabled, refresh_interval, last_refresh_at,
+			next_refresh_at, created_at, updated_at
+		FROM forecasts
+		WHERE auto_refresh_enabled = TRUE 
+			AND status = 'completed'
+			AND next_refresh_at <= $1
+		ORDER BY next_refresh_at ASC
+		LIMIT 100
+	`
+
+	now := time.Now()
+	rows, err := r.db.Query(query, now)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get forecasts for refresh: %w", err)
+	}
+	defer rows.Close()
+
+	var forecasts []*models.Forecast
+	for rows.Next() {
+		forecast := &models.Forecast{}
+		err := rows.Scan(
+			&forecast.ID,
+			&forecast.UserID,
+			&forecast.MonObjectName,
+			&forecast.MetricName,
+			&forecast.FromTimestamp,
+			&forecast.ForecastPeriods,
+			&forecast.Freq,
+			&forecast.Step,
+			&forecast.SeasonalityMode,
+			&forecast.ChangepointPriorScale,
+			&forecast.Status,
+			&forecast.ForecastStartDate,
+			&forecast.ForecastEndDate,
+			&forecast.ForecastPoints,
+			&forecast.ErrorMessage,
+			&forecast.AutoRefreshEnabled,
+			&forecast.RefreshInterval,
+			&forecast.LastRefreshAt,
+			&forecast.NextRefreshAt,
+			&forecast.CreatedAt,
+			&forecast.UpdatedAt,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan forecast: %w", err)
+		}
+		forecasts = append(forecasts, forecast)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating forecasts: %w", err)
+	}
+
+	return forecasts, nil
+}
+
+// calculateNextRefresh calculates the next refresh time based on the interval
+func calculateNextRefresh(from time.Time, interval string) time.Time {
+	duration, err := parseDuration(interval)
+	if err != nil {
+		// Default to 1 hour if parsing fails
+		duration = time.Hour
+	}
+	return from.Add(duration)
+}
+
+// parseDuration parses a duration string (e.g., "1h", "6h", "24h")
+func parseDuration(s string) (time.Duration, error) {
+	return time.ParseDuration(s)
 }

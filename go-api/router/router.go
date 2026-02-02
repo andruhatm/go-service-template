@@ -62,6 +62,10 @@ func GenerateServeMux(authMiddleware middleware.AuthMiddleware, cfg configuratio
 	// Pass notification handler to forecast handler
 	forecastHandler.SetNotificationHandler(notificationHandler)
 
+	// Initialize metric source handler (EMS)
+	metricSourceRepo := repository.NewMetricSourceRepository(db)
+	metricSourceHandler := adminhandlers.NewMetricSourceHandler(metricSourceRepo)
+
 	// Public read-only monitoring objects endpoints (for development/testing)
 	// TODO: Remove or restrict in production
 	sm.HandleFunc("/api/mon-objects", monObjectHandler.ListMonObjects).Methods("GET")
@@ -250,6 +254,40 @@ func GenerateServeMux(authMiddleware middleware.AuthMiddleware, cfg configuratio
 		}
 		notificationHandler.CreateNotification(w, r)
 	}).Methods("POST")
+
+	// EMS (Metric Sources) endpoints - ROLE_ADMIN only
+	// List all metric sources
+	protected.HandleFunc("/ems", metricSourceHandler.ListMetricSources).Methods("GET")
+
+	// Get specific metric source
+	protected.HandleFunc("/ems/{id}", metricSourceHandler.GetMetricSource).Methods("GET")
+
+	// Create metric source
+	protected.HandleFunc("/ems", func(w http.ResponseWriter, r *http.Request) {
+		if !middleware.HasRole(r.Context(), "realm:ROLE_ADMIN") {
+			http.Error(w, "Forbidden: ROLE_ADMIN required", http.StatusForbidden)
+			return
+		}
+		metricSourceHandler.CreateMetricSource(w, r)
+	}).Methods("POST")
+
+	// Update metric source
+	protected.HandleFunc("/ems/{id}", func(w http.ResponseWriter, r *http.Request) {
+		if !middleware.HasRole(r.Context(), "realm:ROLE_ADMIN") {
+			http.Error(w, "Forbidden: ROLE_ADMIN required", http.StatusForbidden)
+			return
+		}
+		metricSourceHandler.UpdateMetricSource(w, r)
+	}).Methods("PUT")
+
+	// Delete metric source
+	protected.HandleFunc("/ems/{id}", func(w http.ResponseWriter, r *http.Request) {
+		if !middleware.HasRole(r.Context(), "realm:ROLE_ADMIN") {
+			http.Error(w, "Forbidden: ROLE_ADMIN required", http.StatusForbidden)
+			return
+		}
+		metricSourceHandler.DeleteMetricSource(w, r)
+	}).Methods("DELETE")
 
 	// Business routes
 	sm.HandleFunc("/buisiness/saveObj", func(w http.ResponseWriter, r *http.Request) {

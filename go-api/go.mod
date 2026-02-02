@@ -9,9 +9,12 @@ require (
 	github.com/gookit/slog v0.5.8
 	github.com/gorilla/mux v1.8.1
 	github.com/ilyakaznacheev/cleanenv v1.5.0
+	github.com/jlaffaye/ftp v0.2.0
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.32
+	github.com/pkg/sftp v1.13.6
 	github.com/prometheus/client_golang v1.22.0
+	golang.org/x/crypto v0.32.0
 	golang.org/x/oauth2 v0.28.0
 )
 
@@ -26,6 +29,7 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
+	github.com/kr/fs v0.1.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.62.0 // indirect

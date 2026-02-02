@@ -244,3 +244,4 @@ if [ -n "$FORECAST_ID" ] && [ "$FORECAST_ID" != "null" ]; then
     echo "  curl -s -H \"Authorization: Bearer $TOKEN\" ${API_URL}/forecasts/${FORECAST_ID} | jq '.status'"
 fi
 
+

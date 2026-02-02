@@ -66,3 +66,4 @@ But this requires changing the application code to lookup IDs first.
 
 **Use the current solution** (no foreign keys, application-level validation). It's simpler and more flexible for this use case.
 
+

@@ -178,3 +178,4 @@ But the subscription pattern is safer and recommended for all components.
 - This means the subscription will fire at least once immediately, even if auth is already initialized
 - The subscription will fire again whenever the auth state changes (e.g., token refresh, logout)
 
+

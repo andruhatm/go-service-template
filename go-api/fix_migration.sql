@@ -14,3 +14,4 @@ UPDATE schema_migrations SET version = 8, dirty = false;
 -- Verify
 SELECT version, dirty FROM schema_migrations;
 
+

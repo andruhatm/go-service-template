@@ -412,3 +412,4 @@ displayNotifications(notifications: any[]) {
 4. Настройте частоту polling
 5. Опционально: добавьте WebSocket для real-time обновлений
 
+

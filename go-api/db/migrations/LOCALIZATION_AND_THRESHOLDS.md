@@ -504,3 +504,4 @@ WHERE degradation = 'higher'
 **Languages**: Russian (RU)  
 **Threshold Levels**: Critical (P1), Warning (P2)
 
+

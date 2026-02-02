@@ -172,3 +172,4 @@ getMetricsPaginated(page: number = 1, pageSize: number = 20): Observable<Paginat
 ✅ **Поиск работает**  
 ✅ **Нет ошибок компиляции в наших файлах**
 
+

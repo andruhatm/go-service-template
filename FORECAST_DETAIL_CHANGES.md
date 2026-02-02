@@ -252,3 +252,4 @@ curl "http://victoriametrics:8428/api/v1/query?query=test1{forecast_id=\"UUID\"}
 - Добавлена кнопка просмотра в список прогнозов
 - Создана документация
 
+

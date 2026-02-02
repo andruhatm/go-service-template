@@ -273,3 +273,4 @@ curl -X POST "http://localhost:8081/api/mon-objects" \
 
 The API is **production-ready** and the frontend service is **ready to use** from your Angular app running at `localhost:4200`! 🚀
 
+

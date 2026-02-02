@@ -15,3 +15,4 @@ import { MonObjectService } from './services/mon-object.service';
 })
 export class MonObjectsModule { }
 
+

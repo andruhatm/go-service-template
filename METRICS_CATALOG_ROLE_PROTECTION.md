@@ -226,3 +226,4 @@ After rebuilding the frontend, users will experience proper role-based access:
 - Monitors/Operators get read-only access
 - UI automatically adapts based on user role
 
+

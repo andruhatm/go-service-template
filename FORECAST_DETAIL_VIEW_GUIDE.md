@@ -227,3 +227,4 @@ curl -X POST "http://localhost:8080/api/metrics/query" \
 4. Логи forecast-service: `docker-compose logs forecast-service`
 5. Консоль браузера для ошибок frontend
 
+

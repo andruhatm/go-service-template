@@ -5,14 +5,20 @@ import { Observable } from 'rxjs';
 export interface Subs {
   id: number;
   source_name: string;
-  description: string;
+  description?: string;
   connection_type: string;
   host: string;
-  FTPport: string;
+  FTPport: number;
   file_path: string;
-  username: string;
-  password: string;
+  username?: string;
+  password?: string;
   schedule: string;
+  enabled?: boolean;
+  last_sync_at?: string;
+  last_sync_status?: 'pending' | 'success' | 'error';
+  last_sync_error?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 @Injectable({ providedIn: 'root' })

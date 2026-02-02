@@ -9,3 +9,4 @@ CREATE TABLE IF NOT EXISTS dashboards (
 -- Create index for user_id for faster queries by user
 CREATE INDEX IF NOT EXISTS idx_dashboards_user_id ON dashboards(user_id);
 
+

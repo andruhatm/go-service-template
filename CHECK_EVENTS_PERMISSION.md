@@ -103,3 +103,4 @@ curl -X GET "http://localhost:8080/admin/realms/myrealm/events?max=10" \
 
 This will show you exactly what events Keycloak is returning and their format.
 
+

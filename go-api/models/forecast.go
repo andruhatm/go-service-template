@@ -21,6 +21,10 @@ type Forecast struct {
 	ForecastEndDate       *time.Time `json:"forecast_end_date,omitempty" db:"forecast_end_date"`
 	ForecastPoints        *int       `json:"forecast_points,omitempty" db:"forecast_points"`
 	ErrorMessage          *string    `json:"error_message,omitempty" db:"error_message"`
+	AutoRefreshEnabled    bool       `json:"auto_refresh_enabled" db:"auto_refresh_enabled"`
+	RefreshInterval       string     `json:"refresh_interval" db:"refresh_interval"`
+	LastRefreshAt         *time.Time `json:"last_refresh_at,omitempty" db:"last_refresh_at"`
+	NextRefreshAt         *time.Time `json:"next_refresh_at,omitempty" db:"next_refresh_at"`
 	CreatedAt             time.Time  `json:"created_at" db:"created_at"`
 	UpdatedAt             time.Time  `json:"updated_at" db:"updated_at"`
 }
@@ -35,15 +39,21 @@ type ForecastCreateRequest struct {
 	Step                  string  `json:"step,omitempty"`
 	SeasonalityMode       string  `json:"seasonality_mode,omitempty"`
 	ChangepointPriorScale float64 `json:"changepoint_prior_scale,omitempty"`
+	AutoRefreshEnabled    bool    `json:"auto_refresh_enabled"`
+	RefreshInterval       string  `json:"refresh_interval,omitempty"`
 }
 
 // ForecastUpdateRequest represents the request to update a forecast (mainly for status updates)
 type ForecastUpdateRequest struct {
-	Status            string     `json:"status,omitempty"`
-	ForecastStartDate *time.Time `json:"forecast_start_date,omitempty"`
-	ForecastEndDate   *time.Time `json:"forecast_end_date,omitempty"`
-	ForecastPoints    *int       `json:"forecast_points,omitempty"`
-	ErrorMessage      *string    `json:"error_message,omitempty"`
+	Status             string     `json:"status,omitempty"`
+	ForecastStartDate  *time.Time `json:"forecast_start_date,omitempty"`
+	ForecastEndDate    *time.Time `json:"forecast_end_date,omitempty"`
+	ForecastPoints     *int       `json:"forecast_points,omitempty"`
+	ErrorMessage       *string    `json:"error_message,omitempty"`
+	AutoRefreshEnabled *bool      `json:"auto_refresh_enabled,omitempty"`
+	RefreshInterval    *string    `json:"refresh_interval,omitempty"`
+	LastRefreshAt      *time.Time `json:"last_refresh_at,omitempty"`
+	NextRefreshAt      *time.Time `json:"next_refresh_at,omitempty"`
 }
 
 // ForecastStatus represents the possible statuses of a forecast

@@ -63,7 +63,7 @@ export class UserMenuComponent implements OnInit, OnDestroy {
     this.notificationSubscription = this.notificationService
       .pollNotifications(30000)
       .subscribe(response => {
-        this.notifications = response.notifications;
+        this.notifications = response?.notifications || [];
       });
   }
 
@@ -71,11 +71,12 @@ export class UserMenuComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.notificationService.getNotifications(20, 0).subscribe({
       next: (response) => {
-        this.notifications = response.notifications;
+        this.notifications = response?.notifications || [];
         this.loading = false;
       },
       error: (err) => {
         console.error('Failed to load notifications:', err);
+        this.notifications = [];
         this.loading = false;
       }
     });
@@ -103,7 +104,9 @@ export class UserMenuComponent implements OnInit, OnDestroy {
 
   markAllAsRead(): void {
     this.notificationService.markAllAsRead().subscribe(() => {
-      this.notifications.forEach(n => n.status = 'read' as any);
+      if (this.notifications && Array.isArray(this.notifications)) {
+        this.notifications.forEach(n => n.status = 'read' as any);
+      }
       this.unreadCount = 0;
     });
   }
@@ -111,7 +114,7 @@ export class UserMenuComponent implements OnInit, OnDestroy {
   deleteNotification(notification: Notification, event: Event): void {
     event.stopPropagation();
     this.notificationService.deleteNotification(notification.id).subscribe(() => {
-      this.notifications = this.notifications.filter(n => n.id !== notification.id);
+      this.notifications = (this.notifications || []).filter(n => n.id !== notification.id);
       if (notification.status === 'unread') {
         this.unreadCount = Math.max(0, this.unreadCount - 1);
       }

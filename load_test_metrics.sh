@@ -75,3 +75,4 @@ curl -s "${VICTORIA_URL}/api/v1/label/__name__/values" | grep -o '"test_metric_[
 echo
 echo "Готово! Теперь можно создавать прогнозы в UI."
 
+

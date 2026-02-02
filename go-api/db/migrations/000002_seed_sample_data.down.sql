@@ -22,3 +22,4 @@ DELETE FROM mon_objects WHERE name IN (
   'server-db-01', 'server-app-01', 'server-backup-01'
 );
 
+

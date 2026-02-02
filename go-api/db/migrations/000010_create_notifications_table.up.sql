@@ -32,3 +32,4 @@ COMMENT ON COLUMN notifications.status IS 'Notification status: unread, read, di
 COMMENT ON COLUMN notifications.read_at IS 'Timestamp when notification was read';
 COMMENT ON COLUMN notifications.expires_at IS 'Timestamp when notification should be automatically removed';
 
+

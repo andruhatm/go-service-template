@@ -36,38 +36,48 @@
           </ng-container>
 
           <ng-container matColumnDef="connection_type" id="connection_type">
-            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5;">Тип подключения</th>
-            <td mat-cell *matCellDef="let item"> {{item.connection_type}}</td>
+            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5;">Тип</th>
+            <td mat-cell *matCellDef="let item">
+              <span style="text-transform: uppercase; font-weight: 500;">{{item.connection_type}}</span>
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="host" id="host">
-            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5;">Хост/Адрес</th>
+            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5;">Хост</th>
             <td mat-cell *matCellDef="let item"> {{item.host}}</td>
           </ng-container>
 
-          <ng-container matColumnDef="FTPport" id="FTPport">
-            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5;">Порт</th>
-            <td mat-cell *matCellDef="let item"> {{item.FTPport}}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="file_path" id="file_path">
-            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5;">Путь к файлам</th>
-            <td mat-cell *matCellDef="let item"> {{item.file_path}}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="username" id="username">
-            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5;">Логин</th>
-            <td mat-cell *matCellDef="let item"> {{item.username}}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="password" id="password">
-            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5;">Пароль</th>
-            <td mat-cell *matCellDef="let item"> {{item.password}}</td>
-          </ng-container>
-
           <ng-container matColumnDef="schedule" id="schedule">
-            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5;">Частота сбора</th>
+            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5;">Частота</th>
             <td mat-cell *matCellDef="let item"> {{item.schedule}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="enabled" id="enabled">
+            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5;">Активно</th>
+            <td mat-cell *matCellDef="let item">
+              <mat-icon [style.color]="item.enabled ? 'green' : 'gray'">
+                {{item.enabled ? 'check_circle' : 'cancel'}}
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="last_sync_status" id="last_sync_status">
+            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5;">Статус</th>
+            <td mat-cell *matCellDef="let item">
+              <span [style.color]="getStatusColor(item.last_sync_status)" style="font-size: 18px; font-weight: bold;">
+                {{getStatusIcon(item.last_sync_status)}}
+              </span>
+              <span [style.color]="getStatusColor(item.last_sync_status)" style="margin-left: 5px;">
+                {{item.last_sync_status || '—'}}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="last_sync_at" id="last_sync_at">
+            <th mat-header-cell *matHeaderCellDef style="font-weight: bold; background: #f5f5f5;">Последняя синхронизация</th>
+            <td mat-cell *matCellDef="let item" [title]="item.last_sync_error || ''">
+              {{formatDate(item.last_sync_at)}}
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="edit">

@@ -231,3 +231,4 @@ migrate -path db/migrations -database "postgres://..." down 1
 
 The metrics configuration table now supports grouping of metrics according to 3GPP standards, enabling better organization, filtering, and presentation of monitoring metrics in the application.
 
+

@@ -170,3 +170,4 @@ INSERT INTO metrics_configuration (name, unit, degradation, "group") VALUES
 
 
 
+

@@ -12,14 +12,12 @@ export class EventsPage implements OnInit {
   dataSource = new MatTableDataSource<Subs>([]);
   displayedColumns = [
     'source_name',
-    'description',
     'connection_type',
     'host',
-    'FTPport',
-    'file_path',
-    'username',
-    'password',
     'schedule',
+    'enabled',
+    'last_sync_status',
+    'last_sync_at',
     'edit',
     'delete'
   ];
@@ -37,53 +35,18 @@ export class EventsPage implements OnInit {
   }
 
   private loadData(): void {
-    // Stub data for manual testing
-    const stubData: Subs[] = [
-      {
-        id: 1,
-        source_name: 'Test Source 1',
-        description: 'Test subscription for FTP connection',
-        connection_type: 'FTP',
-        host: 'ftp.example.com',
-        FTPport: '21',
-        file_path: '/data/files',
-        username: 'testuser1',
-        password: 'password123',
-        schedule: '0 0 * * *'
+    // Load data from backend API
+    this.emsService.getAll().subscribe({
+      next: (data) => {
+        console.log('EMS sources loaded:', data);
+        this.dataSource.data = data;
       },
-      {
-        id: 2,
-        source_name: 'Test Source 2',
-        description: 'Test subscription for SFTP connection',
-        connection_type: 'SFTP',
-        host: 'sftp.example.com',
-        FTPport: '22',
-        file_path: '/uploads/reports',
-        username: 'testuser2',
-        password: 'securepass456',
-        schedule: '0 12 * * *'
-      },
-      {
-        id: 3,
-        source_name: 'Test Source 3',
-        description: 'Test subscription for local file system',
-        connection_type: 'LOCAL',
-        host: 'localhost',
-        FTPport: '0',
-        file_path: '/var/data/input',
-        username: '',
-        password: '',
-        schedule: '*/30 * * * *'
+      error: (err) => {
+        console.error('Load EMS error', err);
+        // Show empty table on error
+        this.dataSource.data = [];
       }
-    ];
-    
-    this.dataSource.data = stubData;
-    
-    // Uncomment below to use real API call
-    // this.emsService.getAll().subscribe({
-    //   next: (data) => this.dataSource.data = data,
-    //   error: (err) => console.error('Load EMS error', err)
-    // });
+    });
   }
 
   editCart(index: number): void {
@@ -115,5 +78,29 @@ export class EventsPage implements OnInit {
   // Пример кнопки добавления, если нужно
   handleEventCreate(): void {
     this.router.navigate(['/ems/add-ems']);
+  }
+
+  getStatusIcon(status?: string): string {
+    switch(status) {
+      case 'success': return '✓';
+      case 'error': return '✗';
+      case 'pending': return '⏳';
+      default: return '—';
+    }
+  }
+
+  getStatusColor(status?: string): string {
+    switch(status) {
+      case 'success': return 'green';
+      case 'error': return 'red';
+      case 'pending': return 'orange';
+      default: return 'gray';
+    }
+  }
+
+  formatDate(date?: string): string {
+    if (!date) return '—';
+    const d = new Date(date);
+    return d.toLocaleString('ru-RU');
   }
 }

@@ -236,3 +236,4 @@ npm run build
 - Pagination state resets when filtering by group
 - Compatible with existing Keycloak authentication
 
+

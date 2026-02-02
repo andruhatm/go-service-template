@@ -221,3 +221,4 @@ Endpoints в `go-api/router/router.go`:
 - **Автор**: System
 - **Зависимости**: 000009 (forecasts table)
 
+

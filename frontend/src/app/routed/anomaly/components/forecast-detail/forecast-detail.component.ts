@@ -172,3 +172,4 @@ export class ForecastDetailComponent implements OnInit {
   }
 }
 
+

@@ -340,3 +340,4 @@ export class MonObjectsManagerComponent implements OnInit {
 
 For complete API documentation, see: `go-api/docs/MON_OBJECTS_API.md`
 
+
